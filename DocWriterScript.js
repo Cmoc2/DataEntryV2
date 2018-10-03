@@ -137,7 +137,7 @@ function PTCheck(discipline){
 		}
 }
 	DocName("Notes")[0].addEventListener("keypress", EnterKey);
-	
+	DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
 	function AdmitCheck(){
 		switch(isAdmit){
 			//if g, SOCDate variable added. Visits always added.
@@ -398,6 +398,11 @@ function BP_Coordinator_until_20181001(x){
 			console.error(referralDate);
 			return "";
 	}
+}
+
+function PatientEnterKey(){
+	console.log(event.keyCode);
+		if(event.keyCode == 13) SubmitPatientName();
 }
 
 new ClipboardJS('.copyTrigger');
