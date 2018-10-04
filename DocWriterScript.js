@@ -4,7 +4,7 @@ function DocName(name){	return document.getElementsByName(name);}
 //*******************//
 
 //toggles
-var isAdmit = null; 
+var isAdmit = null;
 var onBlur = true;  //toggle for automatic updating of individual fields
 
 
@@ -38,7 +38,7 @@ d3.select("#preAdmitButton")
         isAdmit = false;
         AdmitCheck();
     });
-		
+
 d3.select("#admitButton")
     .on("click", function(){
         d3.select(this)
@@ -127,13 +127,9 @@ function ReadCSV(){
 function PTCheck(discipline){
 		//Add 24hr note if PT
 		if(discipline == "PT"){
-			DocID("preSpace").innerHTML = '<p class="normalP"> </p>'
-			DocID("PTnote").innerHTML = "PLEASE MAKE SURE TO SEE PATIENT WITHIN 24 HOURS"
-			DocID("postSpace").innerHTML ='<p style="margin: 0px; padding: 0px; color: #000000; font-family: tahoma; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; widows: 1; font-size: 10pt; word-wrap: break-word;"><span style="font-family: tahoma, arial, helvetica, sans-serif; font-size: 12pt;"> </span></p>'
+			DocID("PTnote").innerHTML = 'PLEASE MAKE SURE TO SEE PATIENT WITHIN 24 HOURS'
 		} else{
-			DocID("preSpace").innerHTML = "";
-			DocID("PTnote").innerHTML = '<p style="margin: 0px; padding: 0px; color: #000000; font-family: tahoma; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: bold; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; widows: 1; font-size: 10pt; word-wrap: break-word;"><span style="font-size: 12pt; font-family: tahoma, arial, helvetica, sans-serif; color: #0000ff;" id="PTnote"> </span></p>';
-			DocID("postSpace").innerHTML ="";
+			DocID("PTnote").innerHTML = '';
 		}
 }
 	DocName("Notes")[0].addEventListener("keypress", EnterKey);
@@ -153,20 +149,20 @@ function PTCheck(discipline){
 				alert('Admit Color invalid input.');
 		}
 	}
-	
+
 	function SubmitColor(){ //same as admitCheck
 		var colorCode = document.querySelector('input[name="AdmitColor"]:checked').value
-		
+
 		//"g"= Admitted; "b"= PreAdmit; anything else blank.
 		switch(colorCode){
 			//if g, SOCDate variable added. Visits always added.
 			case "Admitted":
 				DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
-				DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
+				DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
 				break;
 			case "Pre-Admit":
 				DocID("ifG").innerHTML = '';
-				DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
+				DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
 				break;
 			default:
 				alert('Admit Color invalid input.');
@@ -184,9 +180,10 @@ function PTCheck(discipline){
 						DocID("patientInputCode").innerHTML = "<green>Match Found.</green>";
 						console.log(a);
 						DocID("patientName").innerHTML = a.Patient;
-						//DocID("test").innerHTML = "Please report to " + Find_Branch(a) + ".";
 						if(a["Care Coordinator"] == "") DocID("patientInputCode").innerHTML += "<red> Verify CC.</red>"
-						DocID("test").innerHTML = "Please report to " + a["Care Coordinator"] + ".";
+						if(a["Chart Status"] == "Admitted" || a["Chart Status"] =="Transfer") DocID("admitButton").click();
+							else if (a["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
+						DocID("cc-name").innerHTML = a["Care Coordinator"] + ".";
 					} else{
 						console.error("Devero ID Match Not Found.")
 						DocID("patientInputCode").innerHTML = "<red> Match Not Found.</red>";
@@ -195,7 +192,7 @@ function PTCheck(discipline){
 
 		}
 		//Path B: Patient Name
-		else{ 
+		else{
 			DocID("patientInputCode").innerHTML = "";
 			DocID("patientName").innerHTML = DocName("Patient")[0].value;
 		}
@@ -205,16 +202,16 @@ function PTCheck(discipline){
 		DocID("discipline").innerHTML = document.querySelector('input[name="Discipline"]:checked').value;
 	}
 	function SubmitOrder(){
-		
+
 		var x ="";
-		
+
 		for(i=1; i < (DocName("Order").length-1); i++){
 			if(DocName("Order")[i].checked == true){
 				x += DocName("Order")[i].value;
 			}
 		}
 		x += " " + DocName("Order")[DocName("Order").length-1].value;
-		
+
 		DocID("order").innerHTML = x;
 		return x;
 	}
@@ -229,7 +226,7 @@ function PTCheck(discipline){
 	}
 	function SubmitNotes(){
         if(onBlur==false){} else{
-            DocID("notes").innerHTML = DocName("Notes")[0].value;
+						//Note Submission handled in SubmitRate()
             SubmitRate();
         }
     }
@@ -240,22 +237,24 @@ function PTCheck(discipline){
         switch(specialRate_selection){
             case "SOC Rate":
                 DocID("notes").innerHTML = DocName("Notes")[0].value;
-                DocID("notes").innerHTML += "<br> <span style='color: red;' >" + specialRate_selection + "</span>";
+                DocID("notes").innerHTML += "<br><span style='color: red;' >" + specialRate_selection + "</span><br>";
                 break;
             case null:
-                DocID("notes").innerHTML = DocName("Notes")[0].value;
+								if(DocName("Notes")[0].value =="") DocID("notes").innerHTML = DocName("Notes")[0].value;
+								else
+                DocID("notes").innerHTML = DocName("Notes")[0].value + "<br>";
                 break;
             case "Special Rate":
                 DocID("notes").innerHTML = DocName("Notes")[0].value;
-                DocID("notes").innerHTML += "<br> <span style='color: red;' >" + DocID("specialRateTextid").value + "</span>";
+                DocID("notes").innerHTML += "<br><span style='color: red;' >" + DocID("specialRateTextid").value + "</span><br>";
                 break;
         }
 	}
-	
+
 	function SubmitAll(){
         if(isAdmit==null)alert("Select Admittion Status.")
         onBlur = true;
-		SubmitPatientName();
+		//SubmitPatientName();
 		SubmitDiscipline();
 		SubmitOrder();
 		//SubmitVisits must be done after SubmitColor(id 'visit' & 'Auth' gets placed)
@@ -303,7 +302,7 @@ function LA_Coordinator(x){
 		case Wednesday:
 			return "Klarizza";
 			break;
-		default: 
+		default:
 			alert("Some Kind of error in function LA_Coordinator");
 			return "";
 	}
@@ -311,7 +310,7 @@ function LA_Coordinator(x){
 
 function BP_Coordinator(x){
 	var referralDate = new Date(x["Referral Date"]);
-	
+
 	//if the referral Date is between "Since beginning" and Oct 1, 2018
 	/*if(Date.parse(referralDate) < Date.parse(Date(10/01/2018))){
 		BP_Coordinator_until_20181001(x);
@@ -329,7 +328,7 @@ function BP_Coordinator(x){
 			case Friday:
 				return "Gladys";
 				break;
-			default: 
+			default:
 				alert("Some Kind of error in function BP_Coordinator");
 				console.error("Error in function BP_Coordinator");
 				console.error(referralDate);
@@ -392,7 +391,7 @@ function BP_Coordinator_until_20181001(x){
 		case Thursday:
 			return "Andrea";
 			break;
-		default: 
+		default:
 			alert("Some Kind of error in function BP_Coordinator_until_20181001");
 			console.error("Error in function BP_Coordinator_until_20181001.");
 			console.error(referralDate);
