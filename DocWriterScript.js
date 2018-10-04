@@ -9,6 +9,7 @@ var onBlur = true;  //toggle for automatic updating of individual fields
 
 
 //individual variables
+var person = prompt("Please enter your name", "");
 var notes_value = "";
 var specialRate_selection = null;
 var fileIn = document.getElementById("monkeyCSVInput");
@@ -110,7 +111,7 @@ d3.select("#specialRateButton")
     })
 
 var fileInData;
-
+DocID("user-name").innerHTML = person;
 function ReadCSV(){
 	//if file not csv, alert("File Not Accepted");
 	var reader = new FileReader();
