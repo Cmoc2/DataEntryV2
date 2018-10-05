@@ -9,7 +9,6 @@ var onBlur = true;  //toggle for automatic updating of individual fields
 
 
 //individual variables
-var person = prompt("Please enter your name", "");
 var notes_value = "";
 var specialRate_selection = null;
 var fileIn = document.getElementById("monkeyCSVInput");
@@ -111,7 +110,6 @@ d3.select("#specialRateButton")
     })
 
 var fileInData;
-DocID("user-name").innerHTML = person;
 function ReadCSV(){
 	//if file not csv, alert("File Not Accepted");
 	var reader = new FileReader();
@@ -407,4 +405,17 @@ function PatientEnterKey(){
 		if(event.keyCode == 13) SubmitPatientName();
 }
 
+function UpdateSignature(){
+	switch (document.querySelector('input[name="Signature"]:checked').value) {
+		case 'Alec Beltran':
+				DocID('user-name').innerHTML="Alec Beltran";
+				DocID('e-mail').innerHTML = "Alec.beltran";
+			break;
+		case 'Jesus Coloyan':
+				DocID('user-name').innerHTML="Jesus Coloyan";
+				DocID('e-mail').innerHTML = "Jesus.coloyan";
+			break;
+		default:
+	}
+}
 new ClipboardJS('.copyTrigger');
