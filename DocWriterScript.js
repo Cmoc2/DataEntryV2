@@ -128,9 +128,11 @@ function ReadCSV(){
 function PTCheck(discipline){
 		//Add 24hr note if PT
 		if(discipline == "PT"){
+			DocID("PTnote").style.margin = '1em 0em 1em';
 			DocID("PTnote").innerHTML = 'PLEASE MAKE SURE TO SEE PATIENT WITHIN 24 HOURS'
 		} else{
 			DocID("PTnote").innerHTML = '';
+			DocID("PTnote").style.margin = '0em';
 		}
 }
 	DocName("Notes")[0].addEventListener("keypress", EnterKey);
