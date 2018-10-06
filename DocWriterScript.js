@@ -414,6 +414,10 @@ function UpdateSignature(){
 		case 'Jesus Coloyan':
 				DocID('user-name').innerHTML="Jesus Coloyan";
 				DocID('e-mail').innerHTML = "Jesus.coloyan";
+				break;
+			case 'Monika Bernabe':
+					DocID('user-name').innerHTML="Monika Bernabe";
+					DocID('e-mail').innerHTML = "Monika.bernabe";
 			break;
 		default:
 	}
