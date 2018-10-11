@@ -180,13 +180,13 @@ function SubmitPatientName(){
 			OutputSOCDate(deveroID);
 			OutputAuthorization(deveroID);
 		} catch(TypeError){
-			alert('No File Chosen');
+			alert('Must Choose 3 Files to Search by ID');
 			console.log(TypeError);
 		}
 	}
 	//Path B: Patient Name
 	else{
-		DocID("patientInputCode").innerHTML = "";
+		DocID("CCCode").innerHTML = "";
 		DocID("patientName").innerHTML = DocName("Patient")[0].value;
 	}
 }
@@ -295,7 +295,7 @@ function OutputCoordinator(deveroID){
 	//On Match Found:
 	if(patient != null){
 		DocID("CCCode").innerHTML = "<green>CC Found.</green>";
-		if(patient["Care Coordinator"] == "") DocID("patientInputCode").innerHTML += "<red> Verify CC.</red>"
+		if(patient["Care Coordinator"] == "") DocID("CCCode").innerHTML += "<red> Verify CC.</red>"
 		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer") DocID("admitButton").click();
 			else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
 		console.log("CC: " + patient["Care Coordinator"]);
