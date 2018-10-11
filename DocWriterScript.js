@@ -157,46 +157,32 @@ function AdmitCheck(){
 	switch(isAdmit){
 		//if g, SOCDate variable added. Visits always added.
 		case true:
-			DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
-			DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
+			DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>';
+			DocID("isSOC").innerHTML = 'Case opened & SOC\'d ';
 			break;
 		case false:
 			DocID("ifG").innerHTML = '';
-			DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
+			DocID("isSOC").innerHTML = 'Patient not yet SOC\'d';
+			DocID("SOCDate").innerHTML = '';
 			break;
 		default:
 			alert('Admit Color invalid input.');
 	}
 }
 
-function SubmitColor(){ //same as admitCheck
-	var colorCode = document.querySelector('input[name="AdmitColor"]:checked').value
-
-	//"g"= Admitted; "b"= PreAdmit; anything else blank.
-	switch(colorCode){
-		//if g, SOCDate variable added. Visits always added.
-		case "Admitted":
-			DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
-			DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
-			break;
-		case "Pre-Admit":
-			DocID("ifG").innerHTML = '';
-			DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
-			break;
-		default:
-			alert('Admit Color invalid input.');
-	}
-	SubmitAuthorization();
-	return colorCode;
-}
 function SubmitPatientName(){
 	var deveroID = Number(DocName("Patient")[0].value);
 	//Path A: Devero ID
 	if(Number.isInteger(deveroID)){
-		OutputName(deveroID);
-		OutputSOCDate(deveroID);
-		OutputCoordinator(deveroID);
-		OutputAuthorization(deveroID);
+		try{
+			OutputName(deveroID)
+			OutputCoordinator(deveroID);
+			OutputSOCDate(deveroID);
+			OutputAuthorization(deveroID);
+		} catch(TypeError){
+			alert('No File Chosen');
+			console.log(TypeError);
+		}
 	}
 	//Path B: Patient Name
 	else{
@@ -259,15 +245,25 @@ function SubmitRate(){
 function SubmitAll(){
   if(isAdmit==null)alert("Select Admittion Status.")
   onBlur = true;
-	//SubmitPatientName();
-	SubmitDiscipline();
-	SubmitOrder();
-	//SubmitVisits must be done after SubmitColor(id 'visit' & 'Auth' gets placed)
-	SubmitVisits();
-	SubmitAuthorization();
-	SubmitNotes();
-	SubmitRate();
-	SubmitRecipient();
+	if(Number.isInteger(Number(DocName("Patient")[0].value))){
+		SubmitPatientName();
+		SubmitDiscipline();
+		SubmitOrder();
+		SubmitVisits();
+		SubmitAuthorization();
+		SubmitNotes();
+		SubmitRate();
+		SubmitRecipient();
+	} else {
+		SubmitDiscipline();
+		SubmitOrder();
+		//SubmitVisits must be done after SubmitColor(id 'visit' & 'Auth' gets placed)
+		SubmitVisits();
+		SubmitAuthorization();
+		SubmitNotes();
+		SubmitRate();
+		SubmitRecipient();
+}
 }
 
 /*Helper Functions*/
@@ -298,7 +294,7 @@ function OutputCoordinator(deveroID){
 	var patient = ParseDeveroID(coordinator_data, deveroID);
 	//On Match Found:
 	if(patient != null){
-		DocID("patientInputCode").innerHTML = "<green>CC Found.</green>";
+		DocID("CCCode").innerHTML = "<green>CC Found.</green>";
 		if(patient["Care Coordinator"] == "") DocID("patientInputCode").innerHTML += "<red> Verify CC.</red>"
 		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer") DocID("admitButton").click();
 			else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
@@ -306,7 +302,7 @@ function OutputCoordinator(deveroID){
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
 	} else{
 		console.error("CC Not Found.")
-		DocID("patientInputCode").innerHTML = "<red> CC Not Found.</red>";
+		DocID("CCCode").innerHTML = "<red> CC Not Found.</red>";
 	}
 }
 //1956
@@ -323,10 +319,14 @@ function OutputAuthorization(deveroID){
 function OutputSOCDate(deveroID){
 	var patient = ParseDeveroID(soc_data, deveroID);
 	if(patient != null){
+		DocID("SOCCode").innerHTML = "<green>SOC Found.</green>";
+		DocName("SOCDate")[0].value = String(patient["Start of Care Date"]);
+		DocID("SOCDate").innerHTML = patient["Start of Care Date"];
 		console.log("Patient #" + deveroID + ": " + patient.Patient);
 		console.log("SOC " + patient["Start of Care Date"]);
 	} else {
 		console.error("SOC Date not found");
+		DocID("SOCCode").innerHTML = "<red> SOC Not Found.</red>";
 	}
 }
 
