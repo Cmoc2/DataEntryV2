@@ -109,18 +109,36 @@ d3.select("#specialRateButton")
         SubmitRate();
     })
 
-var fileInData;
-function ReadCSV(){
-	//if file not csv, alert("File Not Accepted");
+var coordinator_data, soc_data, auth_data;
+
+function ReadFiles(x){
+	console.log(x);
+	for(var i=0; i<x.length;i++){
+		ParseFileList(x[i], x[i].name);
+	}
+}
+
+function ParseFileList(fileReference, fileName){
 	var reader = new FileReader();
-	reader.onload = function () {
-    	fileInData = reader.result;
-    	//parse Text file into CSV Array with D3. Saved in variable.
-    	fileInData = d3.csvParse(fileInData);
-    };
-    // start reading the file. When it is done, calls the onload event defined above.
-    // reader.readAsBinaryString(fileInput.files[0]);
-    reader.readAsText(fileIn.files[0], 'utf8');
+	reader.onload = function(){
+		switch(fileName){
+				case 'Authorization Details.csv':
+					auth_data = d3.csvParse(reader.result);
+				 	console.log("Authorizations Loaded.");
+					break;
+				case 'Care Coordinator Assignments.csv':
+					coordinator_data = d3.csvParse(reader.result);
+					console.log("Coordinators Loaded.");
+					break;
+				case 'ReferralReportSOC.csv':
+					soc_data = d3.csvParse(reader.result);
+					console.log('SOC Dates loaded');
+					break;
+				default:
+					console.log("Unusual File name.");
+		}
+	}
+	reader.readAsText(fileReference, 'utf8');
 }
 
 function PTCheck(discipline){
@@ -133,140 +151,124 @@ function PTCheck(discipline){
 			DocID("PTnote").style.margin = '0em';
 		}
 }
-	DocName("Notes")[0].addEventListener("keypress", EnterKey);
-	DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
-	function AdmitCheck(){
-		switch(isAdmit){
-			//if g, SOCDate variable added. Visits always added.
-			case true:
-				DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
-				DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
-				break;
-			case false:
-				DocID("ifG").innerHTML = '';
-				DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
-				break;
-			default:
-				alert('Admit Color invalid input.');
+DocName("Notes")[0].addEventListener("keypress", EnterKey);
+DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
+function AdmitCheck(){
+	switch(isAdmit){
+		//if g, SOCDate variable added. Visits always added.
+		case true:
+			DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
+			DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
+			break;
+		case false:
+			DocID("ifG").innerHTML = '';
+			DocID("isAdmit").innerHTML = '- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
+			break;
+		default:
+			alert('Admit Color invalid input.');
+	}
+}
+
+function SubmitColor(){ //same as admitCheck
+	var colorCode = document.querySelector('input[name="AdmitColor"]:checked').value
+
+	//"g"= Admitted; "b"= PreAdmit; anything else blank.
+	switch(colorCode){
+		//if g, SOCDate variable added. Visits always added.
+		case "Admitted":
+			DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
+			DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
+			break;
+		case "Pre-Admit":
+			DocID("ifG").innerHTML = '';
+			DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
+			break;
+		default:
+			alert('Admit Color invalid input.');
+	}
+	SubmitAuthorization();
+	return colorCode;
+}
+function SubmitPatientName(){
+	var deveroID = Number(DocName("Patient")[0].value);
+	//Path A: Devero ID
+	if(Number.isInteger(deveroID)){
+		OutputName(deveroID);
+		OutputSOCDate(deveroID);
+		OutputCoordinator(deveroID);
+		OutputAuthorization(deveroID);
+	}
+	//Path B: Patient Name
+	else{
+		DocID("patientInputCode").innerHTML = "";
+		DocID("patientName").innerHTML = DocName("Patient")[0].value;
+	}
+}
+function SubmitDiscipline(){
+	PTCheck(document.querySelector('input[name="Discipline"]:checked').value);
+	DocID("discipline").innerHTML = document.querySelector('input[name="Discipline"]:checked').value;
+}
+function SubmitOrder(){
+	var x ="";
+	for(i=1; i < (DocName("Order").length-1); i++){
+		if(DocName("Order")[i].checked == true){
+			x += DocName("Order")[i].value;
 		}
 	}
+	x += " " + DocName("Order")[DocName("Order").length-1].value;
 
-	function SubmitColor(){ //same as admitCheck
-		var colorCode = document.querySelector('input[name="AdmitColor"]:checked').value
+	DocID("order").innerHTML = x;
+	return x;
+}
+function SubmitVisits(){
+	DocID("visits").innerHTML = DocName("Visits")[0].value;
+}
+function SubmitSOC(){
+	DocID("SOCDate").innerHTML = DocName("SOCDate")[0].value;
+}
+function SubmitAuthorization(){
+	document.getElementById("Auth").innerHTML = (DocName("Auth")[1].value =="" || DocName("Auth")[0].value == ""? " ": '- Authorized from ' + document.getElementsByName("Auth")[0].value + ' until ' + document.getElementsByName("Auth")[1].value);
+}
+function SubmitNotes(){
+      if(onBlur==false){} else{
+					//Note Submission handled in SubmitRate()
+          SubmitRate();
+      }
+  }
+function SubmitRecipient(){
+	DocID("recipient").innerHTML = DocName("Recipient")[0].value;
+}
+function SubmitRate(){
+      switch(specialRate_selection){
+          case "SOC Rate":
+              DocID("notes").innerHTML = DocName("Notes")[0].value;
+              DocID("notes").innerHTML += "<br><span style='color: red;' >" + specialRate_selection + "</span><br>";
+              break;
+          case null:
+							if(DocName("Notes")[0].value =="") DocID("notes").innerHTML = DocName("Notes")[0].value;
+							else
+              DocID("notes").innerHTML = DocName("Notes")[0].value + "<br>";
+              break;
+          case "Special Rate":
+              DocID("notes").innerHTML = DocName("Notes")[0].value;
+              DocID("notes").innerHTML += "<br><span style='color: red;' >" + DocID("specialRateTextid").value + "</span><br>";
+              break;
+      }
+}
 
-		//"g"= Admitted; "b"= PreAdmit; anything else blank.
-		switch(colorCode){
-			//if g, SOCDate variable added. Visits always added.
-			case "Admitted":
-				DocID("ifG").innerHTML = 'SoC Date: <input type="text" name="SOCDate" onblur="SubmitSOC()"><br>'
-				DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Case opened & SOC\'d <span id="SOCDate"></span>'+ '<br>'+ '<span id="Auth"></span>'
-				break;
-			case "Pre-Admit":
-				DocID("ifG").innerHTML = '';
-				DocID("isAdmit").innerHTML = '<br>- Frequency: <span id="visits"></span>; Patient not yet SOC\'d'+ '<br>'+ '<span id="Auth"></span>'
-				break;
-			default:
-				alert('Admit Color invalid input.');
-		}
-		SubmitAuthorization();
-		return colorCode;
-	}
-	function SubmitPatientName(){
-		//Path A: Devero ID
-		if(Number.isInteger(Number(DocName("Patient")[0].value))){
-			if(fileInData == null) alert("No File Chosen.");
-				else{ var a = ParseDeveroID(fileInData, Number(DocName("Patient")[0].value));
-					//On Match Found:
-					if(a != null){
-						DocID("patientInputCode").innerHTML = "<green>Match Found.</green>";
-						console.log(a);
-						DocID("patientName").innerHTML = a.Patient;
-						if(a["Care Coordinator"] == "") DocID("patientInputCode").innerHTML += "<red> Verify CC.</red>"
-						if(a["Chart Status"] == "Admitted" || a["Chart Status"] =="Transfer") DocID("admitButton").click();
-							else if (a["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
-						DocID("cc-name").innerHTML = a["Care Coordinator"] + ".";
-					} else{
-						console.error("Devero ID Match Not Found.")
-						DocID("patientInputCode").innerHTML = "<red> Match Not Found.</red>";
-					}
-				}
-
-		}
-		//Path B: Patient Name
-		else{
-			DocID("patientInputCode").innerHTML = "";
-			DocID("patientName").innerHTML = DocName("Patient")[0].value;
-		}
-	}
-	function SubmitDiscipline(){
-		PTCheck(document.querySelector('input[name="Discipline"]:checked').value);
-		DocID("discipline").innerHTML = document.querySelector('input[name="Discipline"]:checked').value;
-	}
-	function SubmitOrder(){
-
-		var x ="";
-
-		for(i=1; i < (DocName("Order").length-1); i++){
-			if(DocName("Order")[i].checked == true){
-				x += DocName("Order")[i].value;
-			}
-		}
-		x += " " + DocName("Order")[DocName("Order").length-1].value;
-
-		DocID("order").innerHTML = x;
-		return x;
-	}
-	function SubmitVisits(){
-		DocID("visits").innerHTML = DocName("Visits")[0].value;
-	}
-	function SubmitSOC(){
-		DocID("SOCDate").innerHTML = DocName("SOCDate")[0].value;
-	}
-	function SubmitAuthorization(){
-		document.getElementById("Auth").innerHTML = (DocName("Auth")[1].value =="" || DocName("Auth")[0].value == ""? " ": '- Authorized from ' + document.getElementsByName("Auth")[0].value + ' until ' + document.getElementsByName("Auth")[1].value);
-	}
-	function SubmitNotes(){
-        if(onBlur==false){} else{
-						//Note Submission handled in SubmitRate()
-            SubmitRate();
-        }
-    }
-	function SubmitRecipient(){
-		DocID("recipient").innerHTML = DocName("Recipient")[0].value;
-	}
-	function SubmitRate(){
-        switch(specialRate_selection){
-            case "SOC Rate":
-                DocID("notes").innerHTML = DocName("Notes")[0].value;
-                DocID("notes").innerHTML += "<br><span style='color: red;' >" + specialRate_selection + "</span><br>";
-                break;
-            case null:
-								if(DocName("Notes")[0].value =="") DocID("notes").innerHTML = DocName("Notes")[0].value;
-								else
-                DocID("notes").innerHTML = DocName("Notes")[0].value + "<br>";
-                break;
-            case "Special Rate":
-                DocID("notes").innerHTML = DocName("Notes")[0].value;
-                DocID("notes").innerHTML += "<br><span style='color: red;' >" + DocID("specialRateTextid").value + "</span><br>";
-                break;
-        }
-	}
-
-	function SubmitAll(){
-        if(isAdmit==null)alert("Select Admittion Status.")
-        onBlur = true;
-		//SubmitPatientName();
-		SubmitDiscipline();
-		SubmitOrder();
-		//SubmitVisits must be done after SubmitColor(id 'visit' & 'Auth' gets placed)
-		SubmitVisits();
-		SubmitAuthorization();
-		SubmitNotes();
-		SubmitRate();
-		SubmitRecipient();
-
-		//add functionality for clipboard.js
-	}
+function SubmitAll(){
+  if(isAdmit==null)alert("Select Admittion Status.")
+  onBlur = true;
+	//SubmitPatientName();
+	SubmitDiscipline();
+	SubmitOrder();
+	//SubmitVisits must be done after SubmitColor(id 'visit' & 'Auth' gets placed)
+	SubmitVisits();
+	SubmitAuthorization();
+	SubmitNotes();
+	SubmitRate();
+	SubmitRecipient();
+}
 
 /*Helper Functions*/
 function EnterKey(event){ //function to add a new line into the notes section.
@@ -275,147 +277,66 @@ function EnterKey(event){ //function to add a new line into the notes section.
 }
 
 function ParseDeveroID(data, monkeyInput){
-	console.log(monkeyInput);
-	var x = null;
 	for(var i = 0; i < data.length; i++){
 		if(Number(data[i]["MR#"]) == monkeyInput){
-			console.log("Match Found.");
 			return data[i];
 		}
 	}
 	return null;
 }
 
-function LA_Coordinator(x){
-	var referralDate = new Date(x["Referral Date"]);
-
-	switch(referralDate.getDay()){
-		case Sunday:
-		case Thursday:
-			return "Darwin";
-			break;
-		case Monday:
-		case Friday:
-		case Saturday:
-			return "Marissa";
-			break;
-		case Tuesday:
-		case Wednesday:
-			return "Klarizza";
-			break;
-		default:
-			alert("Some Kind of error in function LA_Coordinator");
-			return "";
-	}
-}
-
-function BP_Coordinator(x){
-	var referralDate = new Date(x["Referral Date"]);
-
-	//if the referral Date is between "Since beginning" and Oct 1, 2018
-	/*if(Date.parse(referralDate) < Date.parse(Date(10/01/2018))){
-		BP_Coordinator_until_20181001(x);
+function OutputName(deveroID){
+	var patient = ParseDeveroID(coordinator_data, deveroID);
+	if(patient != null){
+		DocID("patientName").innerHTML = patient.Patient;
+		console.log(patient.Patient);
 	} else{
-	//else do what is current:*/
-		switch(referralDate.getDay()){
-			case Saturday:
-			case Sunday:
-			case Tuesday:
-			case Thursday:
-				return "Angela";
-				break;
-			case Monday:
-			case Wednesday:
-			case Friday:
-				return "Gladys";
-				break;
-			default:
-				alert("Some Kind of error in function BP_Coordinator");
-				console.error("Error in function BP_Coordinator");
-				console.error(referralDate);
-				return "";
-		}
-	//}
+		console.error("Patient Not Found.")
+	}
 }
-
-function Find_Branch(x){
-	/*
-	Will need to add a timeline: CC/week do change, so our referrals need to change on CC Updates.
-	*/
-	switch(x.Team){
-		case "COM KP Panorama":
-		case "COM KP Woodland Hills":
-			return "Andrea Aquino";
-			break;
-		case "COM KP Los Angeles":
-			return LA_Coordinator(x);
-			break;
-		case "COM KP Baldwin Park":
-			return BP_Coordinator(x);
-			break;
-		case "COM KP South Bay":
-			return "Jann";
-			break;
-		case "COM KP Fontana":
-			return "Marcela";
-			break;
-		case "COM KP Downey":
-			return "Catherine";
-			break;
-		case "COM Caremore":
-			return "Jovana"
-			break;
-		default:
-			alert("Some Kind of Error in function Find_Branch");
-			console.error("Error in function Find_Branch");
-			console.log(x.Team);
-			return "";
+function OutputCoordinator(deveroID){
+	var patient = ParseDeveroID(coordinator_data, deveroID);
+	//On Match Found:
+	if(patient != null){
+		DocID("patientInputCode").innerHTML = "<green>CC Found.</green>";
+		if(patient["Care Coordinator"] == "") DocID("patientInputCode").innerHTML += "<red> Verify CC.</red>"
+		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer") DocID("admitButton").click();
+			else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
+		console.log("CC: " + patient["Care Coordinator"]);
+		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
+	} else{
+		console.error("CC Not Found.")
+		DocID("patientInputCode").innerHTML = "<red> CC Not Found.</red>";
+	}
+}
+//1956
+function OutputAuthorization(deveroID){
+	var patient = ParseDeveroID(auth_data, deveroID);
+	if(patient != null){
+		console.log('Auth Start:' + patient["Auth Start Date"])
+		console.log('Auth End:' + patient["Auth End Date"])
+	} else{
+		console.error("Auth Dates Not Found");
 	}
 }
 
-
-
-function BP_Coordinator_until_20181001(x){
-	var referralDate = new Date(x["Referral Date"]);
-
-	switch(referralDate.getDay()){
-		case Saturday:
-		case Sunday:
-			return "Massiel";
-			break;
-		case Monday:
-		case Wednesday:
-		case Friday:
-			return "Gladys";
-			break;
-		case Tuesday:
-		case Thursday:
-			return "Andrea";
-			break;
-		default:
-			alert("Some Kind of error in function BP_Coordinator_until_20181001");
-			console.error("Error in function BP_Coordinator_until_20181001.");
-			console.error(referralDate);
-			return "";
+function OutputSOCDate(deveroID){
+	var patient = ParseDeveroID(soc_data, deveroID);
+	if(patient != null){
+		console.log("Patient #" + deveroID + ": " + patient.Patient);
+		console.log("SOC " + patient["Start of Care Date"]);
+	} else {
+		console.error("SOC Date not found");
 	}
 }
 
 function PatientEnterKey(){
-	console.log(event.keyCode);
-		if(event.keyCode == 13) SubmitPatientName();
+	if(event.keyCode == 13) SubmitPatientName();
 }
 
 function UpdateSignature(){
-	switch (document.querySelector('input[name="Signature"]:checked').value) {
-		case 'Alec Beltran':
-				DocID('user-name').innerHTML="Alec Beltran";
-				DocID('e-mail').innerHTML = "Alec.beltran";
-			break;
-		case 'Jesus Coloyan':
-				DocID('user-name').innerHTML="Jesus Coloyan";
-				DocID('e-mail').innerHTML = "Jesus.coloyan";
-			break;
-		default:
-	}
+	DocID('user-name').innerHTML= DocID('user')[DocID('user').selectedIndex].innerHTML
+	DocID('e-mail').innerHTML = DocID("user").value;
 }
+
 new ClipboardJS('.copyTrigger');
