@@ -180,7 +180,7 @@ function SubmitPatientName(){
 			OutputSOCDate(deveroID);
 			OutputAuthorization(deveroID);
 		} catch(TypeError){
-			alert('Must Choose 3 Files to Search by ID');
+			console.error('Must Choose 3 Files to Search by ID');
 			console.log(TypeError);
 		}
 	}
