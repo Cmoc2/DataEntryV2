@@ -320,10 +320,14 @@ function OutputSOCDate(deveroID){
 	var patient = ParseDeveroID(soc_data, deveroID);
 	if(patient != null){
 		DocID("SOCCode").innerHTML = "<green>SOC Found.</green>";
-		DocName("SOCDate")[0].value = String(patient["Start of Care Date"]);
-		DocID("SOCDate").innerHTML = patient["Start of Care Date"];
-		console.log("Patient #" + deveroID + ": " + patient.Patient);
-		console.log("SOC " + patient["Start of Care Date"]);
+		try{
+			DocName("SOCDate")[0].value = String(patient["Start of Care Date"])
+			DocID("SOCDate").innerHTML = patient["Start of Care Date"];
+			console.log("SOC " + patient["Start of Care Date"]);
+		} catch(TypeError){
+			console.error('DocName("SOCDate")[0] undefined. Is patient Preadmit?')
+			console.error("SOC: " + patient["Start of Care Date"]);
+		}
 	} else {
 		console.error("SOC Date not found");
 		DocID("SOCCode").innerHTML = "<red> SOC Not Found.</red>";
