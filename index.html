@@ -1,5 +1,6 @@
 <html>
   <head>
+    <link href="hover.css" rel="stylesheet" media="all">
     <title>Data Entry</title>
     <style>
       body{
@@ -11,6 +12,9 @@
       }
       green{
         color: green;
+      }
+      blue{
+        color: blue;
       }
       .button {
     		background-color: #4CAF50; /* Green */
@@ -27,11 +31,24 @@
             margin: 7px;
     		background-color: #C0C0C0;
     	}
+
+      .disciplineLabel{
+        background: #e1e1e1;
+        color: #666;
+        padding: 5px;
+        border: 1px black;
+      }
+
+      input[name='Discipline']{
+        display: none;
+      }
     </style>
+
+
   </head>
-  <body>
+  <body onload="OnDocLoad()">
     <div id="input-container">
-      <div id="UserFilePatient-container">
+      <div id="UserFilePatient-container" style="opacity: 0;">
         <div style='float: left; '>
           <button type="button" id="preAdmitButton" class="button">Pre-Admit</button>
           <button type="button" id="admitButton" class="button">Admitted</button>
@@ -51,54 +68,59 @@
         <span id="CCCode"></span> <span id="SOCCode"></span>
         <input id="monkeyCSVInput" type="file" accept=".csv" multiple onchange="ReadFiles(this.files)" style='float: right;'>
       </div>
-      <div oninput="SubmitDiscipline()">
-        <form style="background: rgba(255,255,255,.5); display: inline;">
-          Discipline:
-          <input type="radio" name="Discipline" value="PT" id="DisciplinePT" ><label for="DisciplinePT">PT</label>
-          |<input type="radio" name="Discipline" value="OT" id="DisciplineOT"><label for="DisciplineOT">OT</label>
-          |<input type="radio" name="Discipline" value="RN" id="DisciplineRN"><label for="DisciplineRN">RN</label>
-          |<input type="radio" name="Discipline" value="SN" id="DisciplineSN"><label for="DisciplineSN">SN</label>
-          |<input type="radio" name="Discipline" value="ST" id="DisciplineST"><label for="DisciplineST">ST</label>
-          |<input type="radio" name="Discipline" value="HHA" id="DisciplineHHA"><label for="DisciplineHHA">HHA</label>
-          |<input type="radio" name="Discipline" value="LVN" id="DisciplineLVN"><label for="DisciplineLVN">LVN</label>
-          |<input type="radio" name="Discipline" value="MSW" id="DisciplineMSW"><label for="DisciplineMSW">MSW</label>
-        </form>
-      </div>
-      <div>
-        <form onchange='SubmitOrder()'>
-          Order:<input type="reset" name="Order"><br>
-    	     <input type="checkbox" name="Order" value=" EVAL & F/U"> EVAL & F/U<br>
-      	   <input type="checkbox" name="Order" value=" WOUND CARE"> WOUND CARE<br>
-    	     <input type="checkbox" name="Order" value=" MED MGT"> MED MGT<br>
-    	     <input type="checkbox" name="Order" value=" F/U REHAB EVAL & TREAT"> F/U REHAB EVAL & TREAT<br>
-    	     <input type="checkbox" name="Order" value=" BATHING ASSISTANCE"> BATHING ASSISTANCE<br>
-    	     <input type="checkbox" name="Order" value=" VISITS"> VISITS<br>
-    	     Other:<input type="text" name="Order" value = ""><br>
-    	   </form>
-       </div>
-       <div id="visits-soc-container">
-         Visits: <input type="text" name="Visits" oninput='SubmitVisits()'>
-         <span id="ifG"></span>
-       </div>
-       <div oninput='SubmitAuthorization()'>
-         Authorization: From <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth"> Until <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth">
-       </div>
-       <div>
-         Notes:<textarea name="Notes" onblur='SubmitNotes()' rows=3 placeholder="Enter Notes here"></textarea>
-       </div>
-       <div>
-         <button type="button" id="socCancelButton" name="rateButton_name" class="button">None</button>
-         <button type="button" id="socRateButton" name="rateButton_name" class="button">SOC Rate</button>
-         <button type="button" id="specialRateButton" name="rateButton_name" class="button">Special Rate</button>
-         <input hidden id ="specialRateTextid" style="padding: 10px; margin-left: 3px;"type="text" placeholder="+50" onchange='SubmitRate()'>
-       </div>
-       <div style="margin: 1em 0em 1em;">
-         Recipient: <input type="text" name="Recipient" onblur='SubmitRecipient()'>
-       </div>
-       <div>
-         <input type="button" onclick="SubmitAll()" value="Submit"><br>
-         <input type="button" class="copyTrigger" data-clipboard-target="#Template" value="Copy Email">
-         <input type="button" class="copyTrigger" data-clipboard-target="#patientInfo" value="Patient Info Only">
+      <div style="opacity: 0;" id="input-container2">
+        <div oninput="SubmitDiscipline();">
+          <form style="display: inline;">
+            Discipline:
+            <input type="radio" name="Discipline" value="PT" id="DisciplinePT" ><label class="hvr-reveal disciplineLabel" for="DisciplinePT">PT</label>
+            <input type="radio" name="Discipline" value="OT" id="DisciplineOT"><label class="hvr-reveal disciplineLabel" for="DisciplineOT">OT</label>
+            <input type="radio" name="Discipline" value="RN" id="DisciplineRN"><label class="hvr-reveal disciplineLabel" for="DisciplineRN">RN</label>
+            <input type="radio" name="Discipline" value="SN" id="DisciplineSN"><label class="hvr-reveal disciplineLabel" for="DisciplineSN">SN</label>
+            <input type="radio" name="Discipline" value="ST" id="DisciplineST"><label class="hvr-reveal disciplineLabel" for="DisciplineST">ST</label>
+            <input type="radio" name="Discipline" value="HHA" id="DisciplineHHA"><label class="hvr-reveal disciplineLabel" for="DisciplineHHA">HHA</label>
+            <input type="radio" name="Discipline" value="LVN" id="DisciplineLVN"><label class="hvr-reveal disciplineLabel" for="DisciplineLVN">LVN</label>
+            <input type="radio" name="Discipline" value="MSW" id="DisciplineMSW"><label class="hvr-reveal disciplineLabel" for="DisciplineMSW">MSW</label>
+          </form>
+        </div>
+        <div>
+          <form onchange='SubmitOrder()'>
+            Order:<input type="reset" name="Order"><br>
+      	     <input type="checkbox" name="Order" value=" EVAL & F/U"> EVAL & F/U<br>
+        	   <input type="checkbox" name="Order" value=" WOUND CARE"> WOUND CARE<br>
+      	     <input type="checkbox" name="Order" value=" MED MGT"> MED MGT<br>
+      	     <input type="checkbox" name="Order" value=" F/U REHAB EVAL & TREAT"> F/U REHAB EVAL & TREAT<br>
+      	     <input type="checkbox" name="Order" value=" BATHING ASSISTANCE"> BATHING ASSISTANCE<br>
+      	     <input type="checkbox" name="Order" value=" VISITS"> VISITS<br>
+      	     Other:<input type="text" name="Order" value = ""><br>
+      	   </form>
+         </div>
+         <div id="visits-soc-container">
+           Visits: <input type="text" name="Visits" oninput='SubmitVisits()'>
+           <span id="ifG" style='display: inline-block'></span>
+         </div>
+         <div oninput='SubmitAuthorization()'>
+           Authorization: From <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth"> Until <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth">
+         </div>
+         <div>
+           <form id='fromAuth_data'>
+           </form>
+         </div>
+         <div>
+           Notes:<textarea name="Notes" onblur='SubmitNotes()' rows=3 placeholder="Enter Notes here"></textarea>
+         </div>
+         <div>
+           <button type="button" id="socCancelButton" name="rateButton_name" class="button">None</button>
+           <button type="button" id="socRateButton" name="rateButton_name" class="button">SOC Rate</button>
+           <button type="button" id="specialRateButton" name="rateButton_name" class="button">Special Rate</button>
+           <input hidden id ="specialRateTextid" style="padding: 10px; margin-left: 3px;"type="text" placeholder="+50" onchange='SubmitRate()'>
+         </div>
+         <div style="margin: 1em 0em 1em;">
+           Recipient: <input type="text" name="Recipient" onblur='SubmitRecipient()'>
+         </div>
+         <div>
+           <input type="button" class="copyTrigger" data-clipboard-target="#Template" value="Copy Email">
+           <input type="button" class="copyTrigger" data-clipboard-target="#patientInfo" value="Patient Info Only">
+         </div>
        </div>
      </div>
 
@@ -127,7 +149,7 @@
         <p style="margin: 0px; padding: 0px; color: #000000; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; widows: 1; font-family: tahoma; font-size: 10pt; word-wrap: break-word;" data-mce-style="margin: 0px; padding: 0px; color: #000000; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; widows: 1; font-family: tahoma; font-size: 10pt; word-wrap: break-word;"><span style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;"><strong>Please check our Devero system</strong><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>if patient is already SOC'd before scheduling a visit. Patient names in<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span><strong><span style="color: #339966;" data-mce-style="color: #339966;">GREEN</span></strong>&nbsp;have already been admitted; you may proceed as normal. Patient names in<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span><span style="color: #0000ff;" data-mce-style="color: #0000ff;"><strong>BLUE</strong></span>&nbsp;have<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span><strong>NOT</strong><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>been admitted yet<span style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">; please wait for further instructions from the CC for the status update and to proceed visits.&nbsp;</span><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>Also, please call patients<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span></span><span style="color: #ff0000;" data-mce-style="color: #ff0000;">one day before the visit</span><span style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;"><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>to schedule your appointment and<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span></span><span style="color: #ff0000;" data-mce-style="color: #ff0000;">morning of your visit</span><span style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;"><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>to confirm your appointment and if you encounter difficulty contacting the patient, please use alternative numbers listed on the H&amp;P.</span></p>
         <p><p>
         <p style="margin: 0; padding: 0; margin-bottom: .0001pt; line-height: normal;" data-mce-style="margin: 0; padding: 0; margin-bottom: .0001pt; line-height: normal;"><strong><span style="font-size: 12pt; font-family: Arial, sans-serif; color: black;" data-mce-style="font-size: 12pt; font-family: Arial, sans-serif; color: black;">REMINDERS:</span></strong></p>
-        <ol style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><li>Please report any medical findings to:&nbsp;<span style="text-decoration: underline;" data-mce-style="text-decoration: underline;"><strong id="cc-name">Marrissa, Klarizza, Or Darwin.</strong></span></li><li>Please read the patient's H&amp;P before seeing the patient for HOME HEALTH ORDERS, WOUND CARE, and OTHER PERTINENT MEDICAL INFORMATION. You can see the patient's H&amp;P located in our DeVero website<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span><span style="color: #000000; font-family: arial; font-size: small; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: small; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">(allcareprovider.devero.com)&nbsp;</span>using the patient's ID#.</li><li>DO NOT forget to do your HEAD to TOE ASSESSMENT for every visit.</li><li>Sign and save your visit forms immediately or at the end of the visit day<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>including<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>filling out the TIME IN and TIME OUT portion of the note.</li><li>Complete and submit your OASIS and/or visit note within 48 hours of the visit.</li><li><span style="color: #ff0000;" data-mce-style="color: #ff0000;">Do not</span><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>go beyond the authorized visits. Any visit done beyond the authorized date will not be processed and will not be paid.</li></ol>
+        <ol style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;" data-mce-style="color: #000000; font-family: arial; font-size: 13.3333px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;"><li>Please report any medical findings to:&nbsp;<span style="text-decoration: underline;" data-mce-style="text-decoration: underline;"><strong id="cc-name"></strong></span></li><li>Please read the patient's H&amp;P before seeing the patient for HOME HEALTH ORDERS, WOUND CARE, and OTHER PERTINENT MEDICAL INFORMATION. You can see the patient's H&amp;P located in our DeVero website<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span><span style="color: #000000; font-family: arial; font-size: small; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;" data-mce-style="color: #000000; font-family: arial; font-size: small; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: justify; text-indent: 0px; text-transform: none; white-space: normal; widows: 1; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;">(allcareprovider.devero.com)&nbsp;</span>using the patient's ID#.</li><li>DO NOT forget to do your HEAD to TOE ASSESSMENT for every visit.</li><li>Sign and save your visit forms immediately or at the end of the visit day<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>including<span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>filling out the TIME IN and TIME OUT portion of the note.</li><li>Complete and submit your OASIS and/or visit note within 48 hours of the visit.</li><li><span style="color: #ff0000;" data-mce-style="color: #ff0000;">Do not</span><span style="display: inline-block;" data-mce-style="display: inline-block;">&nbsp;</span>go beyond the authorized visits. Any visit done beyond the authorized date will not be processed and will not be paid.</li></ol>
         <p style="margin: 0; padding: 0; margin-bottom: .0001pt; line-height: normal;"><span style="font-size: 10pt;"><em><strong><span style="display: inline-block; font-family: Arial, sans-serif; color: black;">For Physical therapy, please DO NOT send Physical Therapy Assistants (PTA).</span></strong></em></span></p>
         <p style="margin: 0; padding: 0; margin-bottom: .0001pt;"><span style="font-size: 10pt;"><em><strong><span style="font-family: Arial, sans-serif; color: black;">For Occupational therapy, please DO NOT send Occupational Therapy Assistants (OTA).</span></strong></em></span></p>
         <p style="margin: 0; padding: 0; margin-bottom: .0001pt; line-height: normal;"><span style="font-size: 12.0pt; font-family: 'Georgia',serif; color: black;"> </span></p>
@@ -147,12 +169,10 @@
       </div>
     </div>
 <!--WM_COMPOSE_SIGNATURE_END-->
-
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="raphael.min.js"></script>
-    <script src="wheelnav.min.js"></script>
-    <script src="clipboard.min.js"></script>
-    <script src="DocWriterScript.js"></script>
-
+    <script src="raphael.min.js">               </script>
+    <script src="wheelnav.min.js">              </script>
+    <script src="clipboard.min.js">             </script>
+    <script src="DocWriterScript.js">           </script>
   </body>
 </html>

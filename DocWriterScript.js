@@ -1,3 +1,4 @@
+//"use strict";
 //shorthand functions//
 function DocID(id){ return document.getElementById(id); }
 function DocName(name){	return document.getElementsByName(name);}
@@ -12,6 +13,7 @@ var onBlur = true;  //toggle for automatic updating of individual fields
 var notes_value = "";
 var specialRate_selection = null;
 var fileIn = document.getElementById("monkeyCSVInput");
+var coordinator_data, soc_data, auth_data;
 /* Section 1: Pre-Admit / Admit */
 
 //Constants
@@ -23,7 +25,8 @@ const Thursday  = 4;
 const Friday    = 5;
 const Saturday  = 6;
 
-//d3 code for dynamic button selections
+//D3 code:
+//dynamic button selections
 d3.select("#preAdmitButton")
 	.on("click", function(){
 		d3.select(this)
@@ -53,6 +56,19 @@ d3.select("#admitButton")
         isAdmit = true;
         AdmitCheck();
     });
+// Section: Run after Body is loaded.
+function OnDocLoad(){
+	DocName("Notes")[0].addEventListener("keypress", EnterKey);
+	DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
+	new ClipboardJS('.copyTrigger');
+
+	d3.select('#UserFilePatient-container')
+		.transition().duration(1000)
+		.style("opacity", 1);
+
+	d3.select('#Template')
+		.style("opacity", 0);
+}
 
 /* Section : Rate Selection*/
 d3.select("#socRateButton")
@@ -108,11 +124,34 @@ d3.select("#specialRateButton")
         specialRate_selection = "Special Rate";
         SubmitRate();
     })
-
-var coordinator_data, soc_data, auth_data;
+/* Section: Discipline Selection */
+d3.selectAll(".disciplineLabel")
+	.on("click", function(){
+		d3.selectAll(".disciplineLabel")
+			.transition().duration(1000)
+			.style("background-color", "#e1e1e1")
+			.style("color", "#666");
+		d3.select(this)
+			.transition().duration(1000)
+			.style("background-color", "#2098D1")
+			.style("color", "white");
+	})
 
 function ReadFiles(x){
+	if(x.length == 3 && DocID('user').value != ""){
+		d3.select('#input-container2')
+			.transition().duration(1000)
+			.style("opacity", 1);
+		d3.select('#Template')
+			.transition().duration(1000)
+			.style("opacity", 1);
+	} else{
+		d3.select('#input-container2')
+			.transition().duration(1000)
+			.style("opacity", 0);
+	}
 	console.log(x);
+	coordinator_data, soc_data, auth_data = null;
 	for(var i=0; i<x.length;i++){
 		ParseFileList(x[i], x[i].name);
 	}
@@ -151,8 +190,7 @@ function PTCheck(discipline){
 			DocID("PTnote").style.margin = '0em';
 		}
 }
-DocName("Notes")[0].addEventListener("keypress", EnterKey);
-DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
+
 function AdmitCheck(){
 	switch(isAdmit){
 		//if g, SOCDate variable added. Visits always added.
@@ -182,18 +220,39 @@ function SubmitPatientName(){
 		} catch(TypeError){
 			console.error('Must Choose 3 Files to Search by ID');
 			console.log(TypeError);
+			d3.select('#input-container2')
+				.transition().duration(1000)
+				.style("opacity", 0);
+			d3.select('#Template')
+				.transition().duration(1000)
+				.style("opacity", 0);
 		}
 	}
 	//Path B: Patient Name
 	else{
 		DocID("CCCode").innerHTML = "";
+		DocID("SOCCode").innerHTML = "";
 		DocID("patientName").innerHTML = DocName("Patient")[0].value;
+		d3.select('#input-container2')
+			.transition().duration(500)
+			.style("opacity", 1);
+		d3.select('#Template')
+			.transition().duration(500)
+			.style("opacity", 1);
 	}
 }
 function SubmitDiscipline(){
+	document.querySelector('label[for="'
+	+ document.querySelector('input[name="Discipline"]:checked').id
+	+ '"]').click();
+	//Trigger Updating of Auth Display
+	if(Number.isInteger(Number(DocName("Patient")[0].value))){
+		OutputAuthorization(Number(DocName("Patient")[0].value));
+	}
 	PTCheck(document.querySelector('input[name="Discipline"]:checked').value);
 	DocID("discipline").innerHTML = document.querySelector('input[name="Discipline"]:checked').value;
 }
+
 function SubmitOrder(){
 	var x ="";
 	for(i=1; i < (DocName("Order").length-1); i++){
@@ -281,6 +340,20 @@ function ParseDeveroID(data, monkeyInput){
 	return null;
 }
 
+function FindAuths(data, deveroID){
+	var patientAuths = [];
+	for(var i = 0; i < data.length; i++){
+		if(Number(data[i]["MR#"]) == deveroID){
+			patientAuths.push(data[i]);
+		}
+	}
+	return patientAuths;
+}
+
+function PatientEnterKey(){ //Search Devero ID or output patient name on Enter press.
+	if(event.keyCode == 13) SubmitPatientName();
+}
+
 function OutputName(deveroID){
 	var patient = ParseDeveroID(coordinator_data, deveroID);
 	if(patient != null){
@@ -294,10 +367,12 @@ function OutputCoordinator(deveroID){
 	var patient = ParseDeveroID(coordinator_data, deveroID);
 	//On Match Found:
 	if(patient != null){
-		DocID("CCCode").innerHTML = "<green>CC Found.</green>";
-		if(patient["Care Coordinator"] == "") DocID("CCCode").innerHTML += "<red> Verify CC.</red>"
-		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer") DocID("admitButton").click();
-			else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
+		if(patient["Care Coordinator"] == "")
+			DocID("CCCode").innerHTML += "<red> Verify CC.</red>";
+		else DocID("CCCode").innerHTML = "<green>CC Found.</green>";
+		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer")
+		DocID("admitButton").click();
+		else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
 		console.log("CC: " + patient["Care Coordinator"]);
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
 	} else{
@@ -305,12 +380,105 @@ function OutputCoordinator(deveroID){
 		DocID("CCCode").innerHTML = "<red> CC Not Found.</red>";
 	}
 }
-//1956
-function OutputAuthorization(deveroID){
-	var patient = ParseDeveroID(auth_data, deveroID);
-	if(patient != null){
-		console.log('Auth Start:' + patient["Auth Start Date"])
-		console.log('Auth End:' + patient["Auth End Date"])
+
+function OutputAuthorization(deveroID){ //In Progress
+	var patient = FindAuths(auth_data, deveroID);
+	DocID('fromAuth_data').innerHTML = '';
+	if(patient.length != 0 && document.querySelector('input[name="Discipline"]:checked') != null){
+		console.log(patient);
+		for(var i=0;i<patient.length;i++){
+			var li = document.createElement('li');
+			li.setAttribute('onclick','AuthSelect(this);');
+			switch(document.querySelector('input[name="Discipline"]:checked').value){
+				case 'PT':
+				if(patient[i].Discipline =='PT/PTA'){
+					li.innerHTML = patient[i].Discipline
+						+ ', Remaining: '
+						+ patient[i]["Visits Remaining"]
+						+ ' - From: '
+						+ patient[i]["Auth Start Date"]
+						+ ' Until: '
+						+ patient[i]["Auth End Date"];
+					li.setAttribute('_start',patient[i]["Auth Start Date"]);
+					li.setAttribute('_end',patient[i]["Auth End Date"]);
+					DocID("fromAuth_data").appendChild(li);
+				}
+					break;
+				case 'OT':
+				if(patient[i].Discipline =='OT/COTA'){
+					li.innerHTML = patient[i].Discipline
+						+ ', Remaining: '
+						+ patient[i]["Visits Remaining"]
+						+ ' - From: '
+						+ patient[i]["Auth Start Date"]
+						+ ' Until: '
+						+ patient[i]["Auth End Date"];
+						li.setAttribute('_start',patient[i]["Auth Start Date"]);
+						li.setAttribute('_end',patient[i]["Auth End Date"]);
+					DocID("fromAuth_data").appendChild(li);
+				}
+					break;
+				case 'RN':
+				case 'LVN':
+				case 'SN':
+					if(patient[i].Discipline =='RN/LVN'){
+						li.innerHTML = patient[i].Discipline
+							+ ', Remaining: '
+							+ patient[i]["Visits Remaining"]
+							+ ' - From: '
+							+ patient[i]["Auth Start Date"]
+							+ ' Until: '
+							+ patient[i]["Auth End Date"];
+						li.setAttribute('_start',patient[i]["Auth Start Date"]);
+						li.setAttribute('_end',patient[i]["Auth End Date"]);
+						DocID("fromAuth_data").appendChild(li);
+					}
+					break;
+				case 'ST':
+					if(patient[i].Discipline =='ST'){
+						li.innerHTML = patient[i].Discipline
+							+ ', Remaining: '
+							+ patient[i]["Visits Remaining"]
+							+ ' - From: '
+							+ patient[i]["Auth Start Date"]
+							+ ' Until: '
+							+ patient[i]["Auth End Date"];
+						li.setAttribute('_start',patient[i]["Auth Start Date"]);
+						li.setAttribute('_end',patient[i]["Auth End Date"]);
+						DocID("fromAuth_data").appendChild(li);
+					}
+					break;
+				case 'HHA':
+				if(patient[i].Discipline =='HHA/HHA Hospice'){
+					li.innerHTML = patient[i].Discipline
+						+ ', Remaining: '
+						+ patient[i]["Visits Remaining"]
+						+ ' - From: '
+						+ patient[i]["Auth Start Date"]
+						+ ' Until: '
+						+ patient[i]["Auth End Date"];
+					li.setAttribute('_start',patient[i]["Auth Start Date"]);
+					li.setAttribute('_end',patient[i]["Auth End Date"]);
+					DocID("fromAuth_data").appendChild(li);
+				}
+					break;
+				case 'MSW':
+					if(patient[i].Discipline =='MSW/LCSW'){
+						li.innerHTML = patient[i].Discipline
+							+ ', Remaining: '
+							+ patient[i]["Visits Remaining"]
+							+ ' - From: '
+							+ patient[i]["Auth Start Date"]
+							+ ' Until: '
+							+ patient[i]["Auth End Date"];
+						li.setAttribute('_start',patient[i]["Auth Start Date"]);
+						li.setAttribute('_end',patient[i]["Auth End Date"]);
+						DocID("fromAuth_data").appendChild(li);
+					}
+					break;
+				default:
+			}
+		}
 	} else{
 		console.error("Auth Dates Not Found");
 	}
@@ -325,8 +493,10 @@ function OutputSOCDate(deveroID){
 			DocID("SOCDate").innerHTML = patient["Start of Care Date"];
 			console.log("SOC " + patient["Start of Care Date"]);
 		} catch(TypeError){
+			DocID("SOCCode").innerHTML = "<blue>Pre-Admit.</blue>";
 			console.error('DocName("SOCDate")[0] undefined. Is patient Preadmit?')
 			console.error("SOC: " + patient["Start of Care Date"]);
+			console.error(TypeError);
 		}
 	} else {
 		console.error("SOC Date not found");
@@ -334,13 +504,27 @@ function OutputSOCDate(deveroID){
 	}
 }
 
-function PatientEnterKey(){
-	if(event.keyCode == 13) SubmitPatientName();
-}
+ function AuthSelect(element){
+	 var _date = new Date(element.getAttribute('_start'));
+	 DocName("Auth")[0].value = _date.toISOString().split("T")[0];
+	 _date = new Date(element.getAttribute('_end'));
+	 DocName("Auth")[1].value = _date.toISOString().split("T")[0];
+	 SubmitAuthorization();
+ }
 
 function UpdateSignature(){
+	if(coordinator_data == null || soc_data == null || auth_data == null){
+		d3.select('#input-container2')
+			.transition().duration(1000)
+			.style("opacity", 0);
+	} else{
+		d3.select('#input-container2')
+			.transition().duration(1000)
+			.style("opacity", 1);
+		d3.select('#Template')
+			.transition().duration(1000)
+			.style("opacity", 1);
+	}
 	DocID('user-name').innerHTML= DocID('user')[DocID('user').selectedIndex].innerHTML
 	DocID('e-mail').innerHTML = DocID("user").value;
 }
-
-new ClipboardJS('.copyTrigger');
