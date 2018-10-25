@@ -149,6 +149,9 @@ function ReadFiles(x){
 		d3.select('#input-container2')
 			.transition().duration(1000)
 			.style("opacity", 0);
+		d3.select('#Template')
+			.transition().duration(1000)
+			.style("opacity", 0);
 	}
 	console.log(x);
 	coordinator_data, soc_data, auth_data = null;
