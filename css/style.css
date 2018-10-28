@@ -1,0 +1,22 @@
+body{
+  background: url(".././images/lightFocusBrushBackground.jpg");
+  background: url("https://i.ytimg.com/vi/kk9V3ZVNlyU/maxresdefault.jpg");
+  background-size: cover;
+  background-size: auto;
+}
+
+label[for="monkeyCSVInput"]{
+  background: red;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+label[for="monkeyCSVInput"]:hover{
+  border: 1px solid white;
+}
+
+input[name='Discipline']{
+  display: none;
+}

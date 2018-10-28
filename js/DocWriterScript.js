@@ -60,13 +60,18 @@ d3.select("#admitButton")
 function OnDocLoad(){
 	DocName("Notes")[0].addEventListener("keypress", EnterKey);
 	DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
+	window.addEventListener('resize', function(){
+		if(window.innerWidth < 454){
+			DocID('user-container').style.float = 'left';
+		} else DocID('user-container').style.float = 'right';
+	})
 	new ClipboardJS('.copyTrigger');
 
 	d3.select('#UserFilePatient-container')
 		.transition().duration(1000)
 		.style("opacity", 1);
 
-	d3.select('#Template')
+	d3.select('#template_visibility')
 		.style("opacity", 0);
 }
 
@@ -138,18 +143,25 @@ d3.selectAll(".disciplineLabel")
 	})
 
 function ReadFiles(x){
+	if(x.length == 3){
+		document.querySelector('label[for="monkeyCSVInput"]').style.background = "green";
+		document.querySelector('label[for="monkeyCSVInput"]').innerHTML = x.length + " files";
+	}	else{
+		document.querySelector('label[for="monkeyCSVInput"]').innerHTML = x.length + " files";
+		document.querySelector('label[for="monkeyCSVInput"]').style.background = "red";
+	}
 	if(x.length == 3 && DocID('user').value != ""){
 		d3.select('#input-container2')
 			.transition().duration(1000)
 			.style("opacity", 1);
-		d3.select('#Template')
+		d3.select('#template_visibility')
 			.transition().duration(1000)
 			.style("opacity", 1);
 	} else{
 		d3.select('#input-container2')
 			.transition().duration(1000)
 			.style("opacity", 0);
-		d3.select('#Template')
+		d3.select('#template_visibility')
 			.transition().duration(1000)
 			.style("opacity", 0);
 	}
@@ -216,7 +228,6 @@ function SubmitPatientName(){
 	//Path A: Devero ID
 	if(Number.isInteger(deveroID)){
 		try{
-			DocID("CCCode").style.borderStyle = 'solid';
 			OutputName(deveroID)
 			OutputCoordinator(deveroID);
 			OutputSOCDate(deveroID);
@@ -227,21 +238,22 @@ function SubmitPatientName(){
 			d3.select('#input-container2')
 				.transition().duration(1000)
 				.style("opacity", 0);
-			d3.select('#Template')
+			d3.select('#template_visibility')
 				.transition().duration(1000)
 				.style("opacity", 0);
 		}
 	}
 	//Path B: Patient Name
 	else{
+		DocID("CCCode").style.border = "1px none red";
 		DocID("CCCode").innerHTML = "";
-		DocID("CCCode").style.border= "1px none white";
 		DocID("SOCCode").innerHTML = "";
+		DocID("SOCCode").style.border = "1px none red";
 		DocID("patientName").innerHTML = DocName("Patient")[0].value;
 		d3.select('#input-container2')
 			.transition().duration(500)
 			.style("opacity", 1);
-		d3.select('#Template')
+		d3.select('#template_visibility')
 			.transition().duration(500)
 			.style("opacity", 1);
 	}
@@ -372,9 +384,13 @@ function OutputCoordinator(deveroID){
 	var patient = ParseDeveroID(coordinator_data, deveroID);
 	//On Match Found:
 	if(patient != null){
-		if(patient["Care Coordinator"] == "")
-			DocID("CCCode").innerHTML = "<red> Verify CC.</red>";
-		else DocID("CCCode").innerHTML = "<green>CC</green>";
+		if(patient["Care Coordinator"] == ""){
+			DocID("CCCode").style.border = "1px solid red";
+			DocID("CCCode").innerHTML = "<red> Verify CC</red>";
+		} else{
+			DocID("CCCode").style.border = "1px solid green";
+			DocID("CCCode").innerHTML = "<green>CC</green>";
+		}
 		if(patient["Chart Status"] == "Admitted" || patient["Chart Status"] =="Transfer")
 		DocID("admitButton").click();
 		else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
@@ -382,7 +398,8 @@ function OutputCoordinator(deveroID){
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
 	} else{
 		console.error("CC Not Found.")
-		DocID("CCCode").innerHTML = "<red> CC Not Found.</red>";
+		DocID("CCCode").innerHTML = "<red>CC</red>";
+		DocID("CCCode").style.border = '1px solid red';
 	}
 }
 
@@ -492,7 +509,8 @@ function OutputAuthorization(deveroID){ //In Progress
 function OutputSOCDate(deveroID){
 	var patient = ParseDeveroID(soc_data, deveroID);
 	if(patient != null){
-		DocID("SOCCode").innerHTML = "<green>SOC Found.</green>";
+		DocID("SOCCode").innerHTML = "<green>SOC</green>";
+		DocID("SOCCode").style.border = "1px solid green";
 		try{
 			DocName("SOCDate")[0].value = String(patient["Start of Care Date"])
 			DocID("SOCDate").innerHTML = patient["Start of Care Date"];
@@ -505,7 +523,8 @@ function OutputSOCDate(deveroID){
 		}
 	} else {
 		console.error("SOC Date not found");
-		DocID("SOCCode").innerHTML = "<red> SOC Not Found.</red>";
+		DocID("SOCCode").innerHTML = "<red>SOC</red>";
+		DocID("SOCCode").style.border = "1px solid red";
 	}
 }
 
@@ -517,8 +536,7 @@ function OutputSOCDate(deveroID){
 	 SubmitAuthorization();
  }
 
-function UpdateSignature(this){
-	console.log(this);
+function UpdateSignature(user){
 	if(coordinator_data == null || soc_data == null || auth_data == null){
 		d3.select('#input-container2')
 			.transition().duration(1000)
@@ -527,15 +545,23 @@ function UpdateSignature(this){
 		d3.select('#input-container2')
 			.transition().duration(1000)
 			.style("opacity", 1);
-		d3.select('#Template')
+		d3.select('#template_visibility')
 			.transition().duration(1000)
 			.style("opacity", 1);
 	}
+	if(user.value == "Other"){
+		DocID("user_dialog").open = true;
+	}else{
+	DocID("user_dialog").open = false;
 	DocID('user-name').innerHTML= DocID('user')[DocID('user').selectedIndex].innerHTML
 	DocID('e-mail').innerHTML = DocID("user").value;
+	}
 }
 
-function PromptUser(this){
-	console.log('here');
-	DocID('user_dialog').open = true;
+function UserPrompt(formstuff){
+	console.log(formstuff);
+	DocID('user-name').innerHTML= formstuff._custom_user_name.value;
+	DocID('e-mail').innerHTML = formstuff._custom_email.value;
+	DocID("user_dialog").open = false;
+	return false;
 }

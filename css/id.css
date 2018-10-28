@@ -1,0 +1,55 @@
+#input-container{
+  max-width: 576px;
+	background: rgba(250, 250, 250,0.8);
+	padding: 30px;
+	margin: 10px auto;
+	box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.35);
+	border-radius: 10px;
+	border: 6px solid #1379a5;
+  font-family: verdana;
+}
+
+#patientInput{
+  margin: 7px;
+  background-color: #C0C0C0;
+}
+
+#user_dialog{
+  z-index: 1;
+  max-width: 70%;
+	background: rgba(250, 250, 250,0.9);
+	padding: 30px;
+	margin: 10px auto;
+	box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.35);
+	border-radius: 10px;
+	border: 6px solid #1379a5;
+  font-family: verdana;
+}
+
+div#discipline_heading{
+  background-color: #1379a5;
+  display: inline-block;
+  padding: 0em 1em 0em;
+  color: white;
+}
+
+div#discipline_body{
+  background: rgba(255,255,255,0.5);
+  display: inline-block;
+}
+
+#CCCode, #SOCCode{
+  padding: 1px;
+  border: 1px none black;
+}
+
+#template{
+  max-width: 576px;
+	background: rgba(250, 250, 250,0.8);
+	padding: 30px;
+	margin: 10px auto;
+	box-shadow: 1px 1px 25px rgba(0, 0, 0, 0.35);
+	border-radius: 10px;
+	border: 6px solid #1379a5;
+  font-family: verdana;
+}

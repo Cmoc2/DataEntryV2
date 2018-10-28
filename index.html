@@ -1,12 +1,11 @@
 <html>
   <head>
-    <link href="hover.css" rel="stylesheet" media="all">
+    <link href="./css/style.css" rel="stylesheet">
+    <link href="./css/hover.css" rel="stylesheet" media="all">
+    <link href="./css/id.css" rel="stylesheet">
+    <link href="./css/class.css" rel="stylesheet">
     <title>Data Entry</title>
     <style>
-      body{
-		    background: url("lightFocusBrushBackground.jpg");
-		    background-size: cover;
-		  }
       red{
 		    color: red;
       }
@@ -16,32 +15,6 @@
       blue{
         color: blue;
       }
-      .button {
-    		background-color: #4CAF50; /* Green */
-    		background-color: gray;
-    		border: none;
-    		color: white;
-    		padding: 10px 22px;
-    		text-align: center;
-    		text-decoration: none;
-    		display: inline-block;
-    		font-size: 16px;
-    	}
-    	#patientInput{
-            margin: 7px;
-    		background-color: #C0C0C0;
-    	}
-
-      .disciplineLabel{
-        background: #e1e1e1;
-        color: #666;
-        padding: 5px;
-        border: 1px black;
-      }
-
-      input[name='Discipline']{
-        display: none;
-      }
     </style>
 
 
@@ -49,29 +22,42 @@
   <body onload="OnDocLoad()">
     <div id="input-container">
       <div id="UserFilePatient-container" style="opacity: 0;">
-        <div style='float: left; '>
-          <button type="button" id="preAdmitButton" class="button">Pre-Admit</button>
-          <button type="button" id="admitButton" class="button">Admitted</button>
-        </div>
-        <div style='float: right;'>
-          <select id='user' oninput='UpdateSignature()'>
+        <div id='user-container' style='float: right;'>
+          <select id='user' oninput='UpdateSignature(this)'>
             <option value= '' selected hidden disabled> Select User </option>
             <option value="Alec.beltran"> Alec Beltran</option>
             <option value="Jesus.coloyan"> Jesus Coloyan</option>
             <option value="Monika.bernabe"> Monika Bernabe</option>
             <option value="Christian.ortiz"> Christian Ortiz</option>
+            <option value="Other"> Other..</option>
           </select>
+          <dialog id='user_dialog'>
+            <form onsubmit="return UserPrompt(this)">
+              <p><label>Name: <input type='text' name="_custom_user_name"></input></label></p>
+              <span style="display: inline-block;">
+                <label>Email: <input type='text' name="_custom_email"></input>@allcareprovider.com</label>
+              </span>
+              <p><input class="_button" type="submit"></p>
+            </form>
+          </dialog>
+        </div>
+        <div style='float: left;'>
+          <button type="button" id="preAdmitButton" class="button">Pre-Admit</button>
+          <button type="button" id="admitButton" class="button">Admitted</button>
         </div>
         <br>
         <div style='clear: both;'></div>
-        <input id="patientInput" type="text" name="Patient" placeholder="Patient Name or Devero ID" value="" oninput='SubmitPatientName()'>
-        <span id="CCCode"></span> <span id="SOCCode"></span>
-        <input id="monkeyCSVInput" type="file" accept=".csv" multiple onchange="ReadFiles(this.files)" style='float: right;'>
+        <div style="display: inline-block;">
+          <input id="patientInput" class=".hvr-sweep-to-right" type="text" name="Patient" placeholder="Patient Name or Devero ID" value="" oninput='SubmitPatientName()'>
+          <span id="CCCode"></span> <span id="SOCCode"></span>
+          <input id="monkeyCSVInput" type="file" accept=".csv" multiple onchange="ReadFiles(this.files)" style='float: right;' hidden>
+          <label id="monkeyCSVInput_label" for="monkeyCSVInput" class='hvr-sweep-to-right'>Select Files</label>
+        </div>
       </div>
       <div style="opacity: 0;" id="input-container2">
         <div oninput="SubmitDiscipline();">
-          <form style="display: inline;">
-            Discipline:
+          <!--<div id="discipline_heading">Discipline</div> -->
+          <div id="discipline_body">
             <input type="radio" name="Discipline" value="PT" id="DisciplinePT" ><label class="hvr-reveal disciplineLabel" for="DisciplinePT">PT</label>
             <input type="radio" name="Discipline" value="OT" id="DisciplineOT"><label class="hvr-reveal disciplineLabel" for="DisciplineOT">OT</label>
             <input type="radio" name="Discipline" value="RN" id="DisciplineRN"><label class="hvr-reveal disciplineLabel" for="DisciplineRN">RN</label>
@@ -80,7 +66,7 @@
             <input type="radio" name="Discipline" value="HHA" id="DisciplineHHA"><label class="hvr-reveal disciplineLabel" for="DisciplineHHA">HHA</label>
             <input type="radio" name="Discipline" value="LVN" id="DisciplineLVN"><label class="hvr-reveal disciplineLabel" for="DisciplineLVN">LVN</label>
             <input type="radio" name="Discipline" value="MSW" id="DisciplineMSW"><label class="hvr-reveal disciplineLabel" for="DisciplineMSW">MSW</label>
-          </form>
+          </div>
         </div>
         <div>
           <form onchange='SubmitOrder()'>
@@ -99,16 +85,16 @@
            <span id="ifG" style='display: inline-block'></span>
          </div>
          <div oninput='SubmitAuthorization()'>
-           Authorization: From <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth"> Until <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth">
+           Authorized: From <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth"> <span style='display: inline-block'> Until <input type="date" date-date="" date-date-format="MMMM/DD/YYYY" name="Auth"></span>
          </div>
          <div>
            <form id='fromAuth_data'>
            </form>
          </div>
          <div>
-           Notes:<textarea name="Notes" onblur='SubmitNotes()' rows=3 placeholder="Enter Notes here"></textarea>
+           <textarea name="Notes" onblur='SubmitNotes()' rows=3 placeholder="Enter Notes here"></textarea>
          </div>
-         <div>
+         <div style='margin: .5em 0em 0em;'>
            <button type="button" id="socCancelButton" name="rateButton_name" class="button">None</button>
            <button type="button" id="socRateButton" name="rateButton_name" class="button">SOC Rate</button>
            <button type="button" id="specialRateButton" name="rateButton_name" class="button">Special Rate</button>
@@ -127,6 +113,7 @@
     <p></p> <!--Spacer-->
 
 <!--WM_COMPOSE_SIGNATURE_START-->
+    <div id="template_visibility" style="opacity: 0;">
     <div id="Template">
       <div id="part1">
         <p style="font-size: 12pt; font-family: tahoma, arial, helvetica, sans-serif; margin: 0em 0em 1em;">Hi <span id="recipient"></span>,</p>
@@ -168,11 +155,12 @@
         <p style="margin: 0; padding: 0; margin-bottom: .0001pt; line-height: normal;"><span style="font-size: 8.0pt; font-family: 'Arial',sans-serif; color: gray;">CONFIDENTIALITY NOTICE: This communication and any accompanying document(s) are privileged and confidential, and are intended for the sole use of the addressee(s). If you have received this transmission in error, you are advised that any disclosure, copying, distribution, or the taking of any action in reliance upon it is strictly prohibited. If you are not the addressee (s) please return the message via email reply and immediately delete it from your system. Thank You.</span></p>
       </div>
     </div>
+    </div>
 <!--WM_COMPOSE_SIGNATURE_END-->
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="raphael.min.js">               </script>
-    <script src="wheelnav.min.js">              </script>
-    <script src="clipboard.min.js">             </script>
-    <script src="DocWriterScript.js">           </script>
+    <script src="js/raphael.min.js">               </script>
+    <script src="js/wheelnav.min.js">              </script>
+    <script src="js/clipboard.min.js">             </script>
+    <script src="js/DocWriterScript.js">           </script>
   </body>
 </html>
