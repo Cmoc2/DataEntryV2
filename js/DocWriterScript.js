@@ -396,6 +396,7 @@ function OutputCoordinator(deveroID){
 		else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
 		console.log("CC: " + patient["Care Coordinator"]);
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
+		if( patient["Care Coordinator"] == "Burneo, Doris") DocID("cc-name").innerHTML = "Noche, Klarizza.";
 	} else{
 		console.error("CC Not Found.")
 		DocID("CCCode").innerHTML = "<red>CC</red>";
