@@ -568,7 +568,6 @@ function UserPrompt(formstuff){
 }
 
 function ToggleSettings(){
-	console.log('hello');
 	if(DocID("settings").open == true) DocID("settings").open = false;
 	else DocID("settings").open = true;
 
