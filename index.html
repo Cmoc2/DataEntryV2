@@ -21,7 +21,16 @@
 
   </head>
   <body onload="OnDocLoad()">
+    <dialog id = 'settings'>
+      <img src="./images/close.png" style="float: right;" width='32px' onclick='ToggleSettings();'/>
+        <p id='setting_bg_1' onclick='ChangeBG(this)'>Comcare</p>
+        <p id='setting_bg_2' onclick='ChangeBG(this)'>Halloween 2018</p>
+        <p id='setting_bg_3' onclick='ChangeBG(this)'>Thanksgiving 2018</p>
+    </dialog>
     <div id="input-container">
+      <div>
+        <img width="16px" src="./images/setting.png" style='float: right;' onclick='ToggleSettings()'> </img>
+      </div>
       <div id="UserFilePatient-container" style="opacity: 0;">
         <div id='user-container' style='float: right;'>
           <select id='user' oninput='UpdateSignature(this)'>

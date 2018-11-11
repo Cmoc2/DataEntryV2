@@ -566,3 +566,27 @@ function UserPrompt(formstuff){
 	DocID("user_dialog").open = false;
 	return false;
 }
+
+function ToggleSettings(){
+	console.log('hello');
+	if(DocID("settings").open == true) DocID("settings").open = false;
+	else DocID("settings").open = true;
+
+}
+function ChangeBG(background){
+	switch(background.innerHTML){
+		case "Comcare":
+			document.body.style.background = "url(./images/lightFocusBrushBackground.jpg)";
+			break;
+		case "Halloween 2018":
+			document.body.style.background = 'url("https://i.ytimg.com/vi/kk9V3ZVNlyU/maxresdefault.jpg")';
+			break;
+		case "Thanksgiving 2018":
+			document.body.style.background = 'url("https://i0.wp.com/www.kingtumblr.com/wp-content/uploads/2018/10/Funny-Thanksgiving-Themes-4.jpg")';
+			break;
+		default:
+	}
+}
+function test(x){
+	console.log(x);
+}
