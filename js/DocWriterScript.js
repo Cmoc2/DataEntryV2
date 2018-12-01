@@ -587,6 +587,7 @@ function ChangeBG(background){
 			document.body.style.background = 'url(./images/christmas2018.jpg)';
 			break;
 		default:
+			document.body.style.background = 'url(' + background.value + ')';
 	}
 	document.body.style.backgroundSize = "cover";
 	document.body.style.backgroundPosition = "center";
