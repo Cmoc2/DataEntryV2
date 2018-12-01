@@ -578,13 +578,19 @@ function ChangeBG(background){
 			document.body.style.background = "url(./images/lightFocusBrushBackground.jpg)";
 			break;
 		case "Halloween 2018":
-			document.body.style.background = 'url("https://i.ytimg.com/vi/kk9V3ZVNlyU/maxresdefault.jpg")';
+			document.body.style.background = 'url(./images/halloween2018.jpg)';
 			break;
 		case "Thanksgiving 2018":
-			document.body.style.background = 'url("https://i0.wp.com/www.kingtumblr.com/wp-content/uploads/2018/10/Funny-Thanksgiving-Themes-4.jpg")';
+			document.body.style.background = 'url(./images/thanksgiving2018.jpg)';
+			break;
+		case "Christmas 2018":
+			document.body.style.background = 'url(./images/christmas2018.jpg)';
 			break;
 		default:
 	}
+	document.body.style.backgroundSize = "cover";
+	document.body.style.backgroundPosition = "center";
+	document.body.style.backgroundAttachment="fixed";
 }
 function test(x){
 	console.log(x);

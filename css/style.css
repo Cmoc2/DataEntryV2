@@ -1,7 +1,9 @@
 body{
   background: url(".././images/lightFocusBrushBackground.jpg");
-  background: url("https://i0.wp.com/www.kingtumblr.com/wp-content/uploads/2018/10/Funny-Thanksgiving-Themes-4.jpg");
-  background-size: contain;
+  background: url(".././images/christmas2018.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 label[for="monkeyCSVInput"]{
