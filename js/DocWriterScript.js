@@ -60,12 +60,16 @@ d3.select("#admitButton")
 function OnDocLoad(){
 	DocName("Notes")[0].addEventListener("keypress", EnterKey);
 	DocName("Patient")[0].addEventListener("keypress", PatientEnterKey);
+
 	window.addEventListener('resize', function(){
 		if(window.innerWidth < 454){
 			DocID('user-container').style.float = 'left';
 		} else DocID('user-container').style.float = 'right';
 	})
+
 	new ClipboardJS('.copyTrigger');
+
+	CheckCookie();
 
 	d3.select('#UserFilePatient-container')
 		.transition().duration(1000)
@@ -245,6 +249,8 @@ function SubmitPatientName(){
 	}
 	//Path B: Patient Name
 	else{
+		if(DocName("Patient")[0].value === "736e616b65") SecretLevel();
+
 		DocID("CCCode").style.border = "1px none red";
 		DocID("CCCode").innerHTML = "";
 		DocID("SOCCode").innerHTML = "";
@@ -554,16 +560,21 @@ function UpdateSignature(user){
 		DocID("user_dialog").open = true;
 	}else{
 	DocID("user_dialog").open = false;
-	DocID('user-name').innerHTML= DocID('user')[DocID('user').selectedIndex].innerHTML
+	DocID('user-name').innerHTML= DocID('user')[DocID('user').selectedIndex].innerHTML;
+	SetCookie("username", DocID('user')[DocID('user').selectedIndex].innerHTML, 365);
 	DocID('e-mail').innerHTML = DocID("user").value;
+	SetCookie("email", DocID("user").value, 365);
 	}
 }
 
 function UserPrompt(formstuff){
 	console.log(formstuff);
 	DocID('user-name').innerHTML= formstuff._custom_user_name.value;
+	SetCookie("username", formstuff._custom_user_name.value, 365);
 	DocID('e-mail').innerHTML = formstuff._custom_email.value;
+	SetCookie("email", formstuff._custom_email.value, 365);
 	DocID("user_dialog").open = false;
+
 	return false;
 }
 
@@ -576,18 +587,23 @@ function ChangeBG(background){
 	switch(background.innerHTML){
 		case "Comcare":
 			document.body.style.background = "url(./images/lightFocusBrushBackground.jpg)";
+			SetCookie("background", "url(./images/lightFocusBrushBackground.jpg)", 365);
 			break;
 		case "Halloween 2018":
 			document.body.style.background = 'url(./images/halloween2018.jpg)';
+			SetCookie("background", 'url(./images/halloween2018.jpg)', 365);
 			break;
 		case "Thanksgiving 2018":
 			document.body.style.background = 'url(./images/thanksgiving2018.jpg)';
+			SetCookie("background", 'url(./images/thanksgiving2018.jpg)', 365);
 			break;
 		case "Christmas 2018":
 			document.body.style.background = 'url(./images/christmas2018.jpg)';
+			SetCookie("background", 'url(./images/christmas2018.jpg)', 365);
 			break;
 		default:
 			document.body.style.background = 'url(' + background.value + ')';
+			SetCookie("background", 'url(' + background.value + ')', 365);
 	}
 	document.body.style.backgroundSize = "cover";
 	document.body.style.backgroundPosition = "center";
