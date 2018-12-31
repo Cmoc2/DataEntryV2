@@ -249,8 +249,6 @@ function SubmitPatientName(){
 	}
 	//Path B: Patient Name
 	else{
-		if(DocName("Patient")[0].value === "736e616b65") SecretLevel();
-
 		DocID("CCCode").style.border = "1px none red";
 		DocID("CCCode").innerHTML = "";
 		DocID("SOCCode").innerHTML = "";
