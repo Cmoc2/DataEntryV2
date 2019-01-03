@@ -1,4 +1,4 @@
-//"use strict";
+"use strict";
 //shorthand functions//
 function DocID(id){ return document.getElementById(id); }
 function DocName(name){	return document.getElementsByName(name);}
@@ -276,7 +276,7 @@ function SubmitDiscipline(){
 
 function SubmitOrder(){
 	var x ="";
-	for(i=1; i < (DocName("Order").length-1); i++){
+	for(var i=1; i < (DocName("Order").length-1); i++){
 		if(DocName("Order")[i].checked == true){
 			x += DocName("Order")[i].value;
 		}

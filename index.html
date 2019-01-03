@@ -1,4 +1,5 @@
-﻿<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <link href="./css/style.css" rel="stylesheet">
     <link href="./css/hover.css" rel="stylesheet" media="all">
@@ -17,12 +18,10 @@
         color: blue;
       }
     </style>
-
-
   </head>
   <body onload="OnDocLoad()">
     <dialog id = 'settings'>
-      <img src="./images/close.png" style="float: right;" width='32px' onclick='ToggleSettings();'/>
+      <img src="./images/close.png" style="float: right;" width='32' onclick='ToggleSettings();' alt="close"/>
         <p id='setting_bg_1' onclick='ChangeBG(this)'>Comcare</p>
         <p id='setting_bg_2' onclick='ChangeBG(this)'>Halloween 2018</p>
         <p id='setting_bg_3' onclick='ChangeBG(this)'>Thanksgiving 2018</p>
@@ -32,7 +31,7 @@
     </dialog>
     <div id="input-container">
       <div>
-        <img width="16px" src="./images/setting.png" style='float: right;' onclick='ToggleSettings()'> </img>
+        <img width="16" src="./images/setting.png" style='float: right;' onclick='ToggleSettings()' alt="settings"/>
       </div>
       <div id="UserFilePatient-container" style="opacity: 0;">
         <div id='user-container' style='float: right;'>
@@ -46,9 +45,9 @@
           </select>
           <dialog id='user_dialog'>
             <form onsubmit="return UserPrompt(this)">
-              <p><label>Name: <input type='text' name="_custom_user_name"></input></label></p>
+              <p><label>Name: <input type='text' name="_custom_user_name"></label></p>
               <span style="display: inline-block;">
-                <label>Email: <input type='text' name="_custom_email"></input>@allcareprovider.com</label>
+                <label>Email: <input type='text' name="_custom_email">@allcareprovider.com</label>
               </span>
               <p><input class="_button" type="submit"></p>
             </form>
@@ -82,14 +81,15 @@
           </div>
         </div>
         <div>
-          <form onchange='SubmitOrder()'>
+          <form onchange='SubmitOrder()' onreset='SubmitOrder()'>
             Order:<input type="reset" name="Order"><br>
-      	     <input type="checkbox" name="Order" value=" EVAL & F/U"> EVAL & F/U<br>
-        	   <input type="checkbox" name="Order" value=" WOUND CARE"> WOUND CARE<br>
-      	     <input type="checkbox" name="Order" value=" MED MGT"> MED MGT<br>
-      	     <input type="checkbox" name="Order" value=" F/U REHAB EVAL & TREAT"> F/U REHAB EVAL & TREAT<br>
-      	     <input type="checkbox" name="Order" value=" BATHING ASSISTANCE"> BATHING ASSISTANCE<br>
-      	     <input type="checkbox" name="Order" value=" VISITS"> VISITS<br>
+      	     <input type="checkbox" name="Order" value=" IV">IV<br>
+        	   <input type="checkbox" name="Order" value=" WOUND CARE">WOUND CARE<br>
+      	     <input type="checkbox" name="Order" value=" MED MGT">MED MGT<br>
+      	     <input type="checkbox" name="Order" value=" FOLEY">FOLEY<br>
+      	     <input type="checkbox" name="Order" value=" EVAL">EVAL<br>
+             <input type="checkbox" name="Order" value=" BATHING">BATHING<br>
+      	     <input type="checkbox" name="Order" value=" VISITS">VISITS<br>
       	     Other:<input type="text" name="Order" value = ""><br>
       	   </form>
          </div>
@@ -111,7 +111,7 @@
            <button type="button" id="socCancelButton" name="rateButton_name" class="button">None</button>
            <button type="button" id="socRateButton" name="rateButton_name" class="button">SOC Rate</button>
            <button type="button" id="specialRateButton" name="rateButton_name" class="button">Special Rate</button>
-           <input hidden id ="specialRateTextid" style="padding: 10px; margin-left: 3px;"type="text" placeholder="+50" onchange='SubmitRate()'>
+           <input hidden id ="specialRateTextid" style="padding: 10px; margin-left: 3px;" type="text" placeholder="+50" onchange='SubmitRate()'>
          </div>
          <div style="margin: 1em 0em 1em;">
            Recipient: <input type="text" name="Recipient" onblur='SubmitRecipient()'>
@@ -127,7 +127,7 @@
 
 <!--WM_COMPOSE_SIGNATURE_START-->
     <div id="template_visibility" style="opacity: 0;">
-    <div id="Template">
+    <div id="template">
       <div>
         <p id="hp_notice">
           <b style='color: red;'>In compliance with Medicare's PHI Privacy Policy, we are no longer attaching patient H&P in emails. Please log into DeVero and search for your assigned patient name/s indicated below.</b>
@@ -184,6 +184,5 @@
     <script src="js/clipboard.min.js">             </script>
     <script src="js/DocWriterScript.js">           </script>
     <script src="js/yummycookies.js">              </script>
-    <script src="js/secretLevel.js">               </script>
   </body>
 </html>
