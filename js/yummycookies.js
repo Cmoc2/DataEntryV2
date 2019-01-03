@@ -23,7 +23,7 @@ function GetCookie(cname) {
 function CheckCookie() {
     var user = GetCookie("username");
     if (user != "") {
-        alert("Welcome again " + user);
+        //alert("Welcome again " + user);
         DocID('user-name').innerHTML = GetCookie("username");
         DocID('e-mail').innerHTML = GetCookie("email");
 

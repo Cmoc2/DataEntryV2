@@ -599,6 +599,10 @@ function ChangeBG(background){
 			document.body.style.background = 'url(./images/christmas2018.jpg)';
 			SetCookie("background", 'url(./images/christmas2018.jpg)', 365);
 			break;
+		case "New Year 2019":
+			document.body.style.background = 'url(./images/newYear2019.jpg)';
+			SetCookie("background", 'url(./images/newYear2019.jpg)', 365);
+			break;
 		default:
 			document.body.style.background = 'url(' + background.value + ')';
 			SetCookie("background", 'url(' + background.value + ')', 365);
