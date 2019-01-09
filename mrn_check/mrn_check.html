@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="./css/mrn_check.css" rel="stylesheet">
+  </head>
+  <body>
+    <h2><u>MRN Compare Tool</u></h2>
+    <div>
+      <p>Upload CSV File.
+        <input type='file' id='mrn_file'><br>
+        <div>
+          <p> Filters</p>
+          <button id=csv_button> MRNs w/o 8 digits </button>
+        </div>
+      </p>
+    </div>
+    <p>
+      Upload the sharepoint file to compare it to:
+      <input type='file' id='sp_file'>
+    </p>
+    <p>
+      Choose date to compare: <input type="date"></input><br>
+      <button id='compare_button'>Compare</button>
+    </p>
+    <button id='reset_table_button'>Reset Table</button>
+    <table id='output_element'>
+      <tr>
+        <th>Patient Name</th>
+        <th>MRN</th>
+        <th>Insurance</th>
+      </tr>
+
+    </table>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="./js/mrn_check.js"></script>
+  </body>
+</html>
