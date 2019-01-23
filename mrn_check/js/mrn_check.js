@@ -93,16 +93,24 @@ document.getElementById("compare_button").addEventListener('click', function(e){
               }
             }
             if(foundMatch == false){
-              console.log("No matching MRN (" +leTarget["Ins MRN"]+") for: " + leTarget.Patient)
+              console.log("No matching MRN (" +leTarget["Ins MRN"]+") for: " + leTarget.Patient);
+              var tr = document.createElement("TR");
+              for(var i=0;i<4;i++){
+                var td = document.createElement("TD");
+                var text;
+                if(i==0)  text = document.createTextNode(leTarget.Patient);
+                  else if(i==1) text = document.createTextNode('');
+                  else if(i==2) text = document.createTextNode(leTarget["Ins MRN"]);
+                  else if(i==3) text = document.createTextNode(leTarget["Referral Date"]);
+                td.appendChild(text);
+                tr.appendChild(td);
+              }
+              discrepancy++;
+              document.getElementById("output_discrepancies_element").appendChild(tr);
             }
           }
       });
-      //get the referral date and compare those only.
-      //"x devero files found"
-      //"y sharepoint files found"
-      //start from lower file # & List difference via mrn.
-      //if 0 on list " no different MRNS found."
-      console.log("Devero: "+devero_count+". Sharepoint: "+sp_count+". Discrepancies: "+discrepancy+".")
+      document.getElementById("count3").innerHTML = "Devero: "+devero_count+". Sharepoint: "+sp_count+". Discrepancies: "+discrepancy+".";
     } else alert("referral date filter not checked.")
 });
 
