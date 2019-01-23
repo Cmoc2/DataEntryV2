@@ -22,6 +22,7 @@ document.getElementById("csv_button").addEventListener('click', function(e){
     if(document.getElementById("eight_mrn").checked) IsEightDigits(leTarget, TestObj);
     if(document.getElementById("cm-mcmg-medicare").checked) FilterCM(leTarget, TestObj);
     if(document.getElementById("referral_date").checked) FilterDate(leTarget, TestObj, "Devero");
+    if(document.getElementById("kaiser-commercial").checked) FilterKaiser(leTarget, TestObj, "Devero");
     if (TestObj.filter === false){
       var tr = document.createElement("TR");
 //if( (new Date(document.getElementById("date_input").value)).setHours(0,0,0,0) == (new Date(leTarget["Referral Date"])).setHours(0,0,0,0))
@@ -78,11 +79,31 @@ document.getElementById("reset_sp_table_button").addEventListener('click', funct
 
 document.getElementById("compare_button").addEventListener('click', function(e){
   if(mrn_file.fileData == null || sp_file.fileData == null) alert("missing file to compare");
-  //get the referral date and compare those only.
-  //"x devero files found"
-  //"y sharepoint files found"
-  //start from lower file # & List difference via mrn.
-  //if 0 on list " no different MRNS found."
+    else if(document.getElementById("referral_date").checked){
+      var devero_count = 0, sp_count = 0, discrepancy = 0;
+      mrn_file.fileData.forEach(function(leTarget){
+        if( new Date(leTarget["Referral Date"]).setHours(0,0,0,0) != new Date(document.getElementById("date_input").value).setHours(0,0,0,0) ); //do nothing, else
+          else{
+            var foundMatch = false;
+            ++devero_count;
+            for(var i=0; i<sp_file.fileData.length; i++){
+              if(Number(leTarget["Ins MRN"]) == Number(sp_file.fileData[i].MRN) || leTarget["Ins MRN"] == sp_file.fileData[i].MRN){
+                foundMatch =true;
+                break;
+              }
+            }
+            if(foundMatch == false){
+              console.log("No matching MRN (" +leTarget["Ins MRN"]+") for: " + leTarget.Patient)
+            }
+          }
+      });
+      //get the referral date and compare those only.
+      //"x devero files found"
+      //"y sharepoint files found"
+      //start from lower file # & List difference via mrn.
+      //if 0 on list " no different MRNS found."
+      console.log("Devero: "+devero_count+". Sharepoint: "+sp_count+". Discrepancies: "+discrepancy+".")
+    } else alert("referral date filter not checked.")
 });
 
 function ParseFileList(fileReference, file){
@@ -113,6 +134,17 @@ function FilterDate(leTarget, TestObj, sourceData){
       break;
     case "Devero":
       if( new Date(leTarget["Referral Date"]).setHours(0,0,0,0) != new Date(document.getElementById("date_input").value).setHours(0,0,0,0) ) TestObj.filter = true;
+      break;
+    default:
+  }
+}
+
+function FilterKaiser(leTarget, TestObj, sourceData){
+  switch(sourceData){
+    case "Devero":
+      //if( leTarget.kaiser != commertial) filter = true;
+      break;
+    case "Sharepoint":
       break;
     default:
   }
