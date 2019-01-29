@@ -4,6 +4,7 @@ var mrn_file = {fileData:null};
 var sp_file = {fileData:null};
 var resetTable = document.getElementById("output_element").innerHTML;
 var resetSpTable = document.getElementById("output_sp_element").innerHTML;
+var resetDiscrepanciesTable = document.getElementById("output_discrepancies_element").innerHTML;
 
 document.getElementById("mrn_file").addEventListener('change', function(e){
   ParseFileList(e.target.files[0], mrn_file);
@@ -77,7 +78,12 @@ document.getElementById("reset_sp_table_button").addEventListener('click', funct
   document.getElementById("output_sp_element").innerHTML = resetSpTable;
 });
 
+document.getElementById("reset_discrepancies_table_button").addEventListener('click', function(e){
+  document.getElementById("output_discrepancies_element").innerHTML = resetDiscrepanciesTable;
+});
+
 document.getElementById("compare_button").addEventListener('click', function(e){
+  document.getElementById("output_discrepancies_element").innerHTML = resetDiscrepanciesTable;
   if(mrn_file.fileData == null || sp_file.fileData == null) alert("missing file to compare");
     else if(document.getElementById("referral_date").checked){
       var devero_count = 0, sp_count = 0, discrepancy = 0;
@@ -87,7 +93,11 @@ document.getElementById("compare_button").addEventListener('click', function(e){
             var foundMatch = false;
             ++devero_count;
             for(var i=0; i<sp_file.fileData.length; i++){
-              if(Number(leTarget["Ins MRN"]) == Number(sp_file.fileData[i].MRN) || leTarget["Ins MRN"] == sp_file.fileData[i].MRN){
+              if( //if MRNs and Referral dates match
+                (  Number(leTarget["Ins MRN"]) == Number(sp_file.fileData[i].MRN)
+                  || leTarget["Ins MRN"] == sp_file.fileData[i].MRN
+                ) && new Date(leTarget["Referral Date"]).setHours(0,0,0,0) == new Date(sp_file.fileData[i]["Referral Date"]).setHours(0,0,0,0)
+              ){
                 foundMatch =true;
                 break;
               }
@@ -148,6 +158,7 @@ function FilterDate(leTarget, TestObj, sourceData){
 }
 
 function FilterKaiser(leTarget, TestObj, sourceData){
+  throw alert("Not yet implemented.")
   switch(sourceData){
     case "Devero":
       //if( leTarget.kaiser != commertial) filter = true;
