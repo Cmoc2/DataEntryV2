@@ -16,31 +16,45 @@ document.getElementById("sp_file").addEventListener('change', function(e){
 
 document.getElementById("csv_button").addEventListener('click', function(e){
   document.getElementById("output_element").innerHTML = resetTable;
-  var count = 0;
-  mrn_file.fileData.forEach(function(leTarget){
-    var TestObj = {filter:false};
-    //tests that must be passed
-    if(document.getElementById("eight_mrn").checked) IsEightDigits(leTarget, TestObj);
-    if(document.getElementById("cm-mcmg-medicare").checked) FilterCM(leTarget, TestObj);
-    if(document.getElementById("referral_date").checked) FilterDate(leTarget, TestObj, "Devero");
-    if(document.getElementById("kaiser-commercial").checked) FilterKaiser(leTarget, TestObj, "Devero");
-    if (TestObj.filter === false){
-      var tr = document.createElement("TR");
-//if( (new Date(document.getElementById("date_input").value)).setHours(0,0,0,0) == (new Date(leTarget["Referral Date"])).setHours(0,0,0,0))
-      for(var i=0;i<4;i++){
-        var td = document.createElement("TD");
-        var text;
-        if(i==0)  text = document.createTextNode(leTarget.Patient);
-          else if(i==1) text = document.createTextNode(leTarget["Ins MRN"]);
-          else if(i==2) text = document.createTextNode(leTarget.Insurance);
-          else if(i==3) text = document.createTextNode(leTarget["Referral Date"]);
-        td.appendChild(text);
-        tr.appendChild(td);
+  var count = 0, columns = 4;
+  if(document.getElementById("kaiser-commercial").checked){
+    var header = document.createElement("TH");
+    header.appendChild(document.createTextNode("Insurance"));
+    document.querySelector("tr").appendChild(header);
+    columns=5;
+  }
+  try{
+    mrn_file.fileData.forEach(function(leTarget){
+      var TestObj = {filter:false};
+      //tests that must be passed
+      if(document.getElementById("eight_mrn").checked) IsEightDigits(leTarget, TestObj);
+      if(document.getElementById("cm-mcmg-medicare").checked) FilterCM(leTarget, TestObj);
+      if(document.getElementById("referral_date").checked) FilterDate(leTarget, TestObj, "Devero");
+      if(document.getElementById("kaiser-commercial").checked){
+        FilterKaiser(leTarget, TestObj, "Devero");
       }
-      document.getElementById("output_element").appendChild(tr);
-      ++count;
-    }
-  });
+      if (TestObj.filter === false){
+        var tr = document.createElement("TR");
+  //if( (new Date(document.getElementById("date_input").value)).setHours(0,0,0,0) == (new Date(leTarget["Referral Date"])).setHours(0,0,0,0))
+        for(var i=1;i<=columns;i++){
+          var td = document.createElement("TD");
+          var text;
+          if(i==1)  text = document.createTextNode(leTarget.Patient);
+            else if(i==2) text = document.createTextNode(leTarget["Ins MRN"]);
+            else if(i==3) text = document.createTextNode(leTarget.Insurance);
+            else if(i==4) text = document.createTextNode(leTarget["Referral Date"]);
+            else if(i==5) text = document.createTextNode(leTarget["Primary Insurance Comments"]);
+          td.appendChild(text);
+          tr.appendChild(td);
+        }
+        document.getElementById("output_element").appendChild(tr);
+        ++count;
+      }
+    });
+  } catch(e){
+    console.error(e);
+    alert("var mrn_file error.");
+  }
   document.getElementById("count1").innerHTML = count + " Patients Listed."
 });
 
@@ -158,10 +172,9 @@ function FilterDate(leTarget, TestObj, sourceData){
 }
 
 function FilterKaiser(leTarget, TestObj, sourceData){
-  throw alert("Not yet implemented.")
   switch(sourceData){
     case "Devero":
-      //if( leTarget.kaiser != commertial) filter = true;
+      if(leTarget.Insurance != "Kaiser Foundation Health Plan Commercial")TestObj.filter = true;
       break;
     case "Sharepoint":
       break;
