@@ -1,7 +1,6 @@
 'use strict';
-var data = {devero: null, sharepoint: null};
-var mrn_file = {fileData:null};
-var sp_file = {fileData:null};
+var data = {deveroData: null, sharepointData: null};
+var mrn_file = {fileData:null}, sp_file = {fileData:null};
 var resetTable = document.getElementById("output_element").innerHTML;
 var resetSpTable = document.getElementById("output_sp_element").innerHTML;
 var resetDiscrepanciesTable = document.getElementById("output_discrepancies_element").innerHTML;
@@ -9,11 +8,9 @@ var resetDiscrepanciesTable = document.getElementById("output_discrepancies_elem
 document.getElementById("mrn_file").addEventListener('change', function(e){
   ParseFileList(e.target.files[0], mrn_file);
 });
-
 document.getElementById("sp_file").addEventListener('change', function(e){
   ParseFileList(e.target.files[0], sp_file);
 });
-
 document.getElementById("csv_button").addEventListener('click', function(e){
   document.getElementById("output_element").innerHTML = resetTable;
   var count = 0, columns = 4;
@@ -35,6 +32,8 @@ document.getElementById("csv_button").addEventListener('click', function(e){
       }
       if (TestObj.filter === false){
         var tr = document.createElement("TR");
+        tr.setAttribute("class", 'row');
+        tr.data = leTarget;
   //if( (new Date(document.getElementById("date_input").value)).setHours(0,0,0,0) == (new Date(leTarget["Referral Date"])).setHours(0,0,0,0))
         for(var i=1;i<=columns;i++){
           var td = document.createElement("TD");
@@ -57,14 +56,13 @@ document.getElementById("csv_button").addEventListener('click', function(e){
   }
   document.getElementById("count1").innerHTML = count + " Patients Listed."
 });
-
 document.getElementById("sp_button").addEventListener('click', function(e){
   document.getElementById("output_sp_element").innerHTML = resetSpTable;
   var count = 0;
   sp_file.fileData.forEach(function(leTarget){
     var TestObj = {filter:false};
     var tr = document.createElement("TR");
-
+    tr.setAttribute("class", 'row');
     if(document.getElementById("referral_date").checked) FilterDate(leTarget, TestObj, "Sharepoint");
     if(TestObj.filter === false){
       for(var i=0;i<4;i++){
@@ -83,19 +81,15 @@ document.getElementById("sp_button").addEventListener('click', function(e){
   });
     document.getElementById("count2").innerHTML = count + " Patients Listed."
 });
-
 document.getElementById("reset_table_button").addEventListener('click', function(e){
   document.getElementById("output_element").innerHTML = resetTable;
 });
-
 document.getElementById("reset_sp_table_button").addEventListener('click', function(e){
   document.getElementById("output_sp_element").innerHTML = resetSpTable;
 });
-
 document.getElementById("reset_discrepancies_table_button").addEventListener('click', function(e){
   document.getElementById("output_discrepancies_element").innerHTML = resetDiscrepanciesTable;
 });
-
 document.getElementById("compare_button").addEventListener('click', function(e){
   document.getElementById("output_discrepancies_element").innerHTML = resetDiscrepanciesTable;
   if(mrn_file.fileData == null || sp_file.fileData == null) alert("missing file to compare");
@@ -119,6 +113,7 @@ document.getElementById("compare_button").addEventListener('click', function(e){
             if(foundMatch == false){
               console.log("No matching MRN (" +leTarget["Ins MRN"]+") for: " + leTarget.Patient);
               var tr = document.createElement("TR");
+              tr.setAttribute("class", 'row');
               for(var i=0;i<4;i++){
                 var td = document.createElement("TD");
                 var text;
@@ -137,7 +132,19 @@ document.getElementById("compare_button").addEventListener('click', function(e){
       document.getElementById("count3").innerHTML = "Devero: "+devero_count+". Sharepoint: "+sp_count+". Discrepancies: "+discrepancy+".";
     } else alert("referral date filter not checked.")
 });
+document.addEventListener('click', function(e){
 
+  if(event.target.tagName != 'TD') return;
+  document.getElementById('info_name').innerHTML = e.target.parentNode.data.Patient;
+  document.getElementById('info_age').innerHTML = e.target.parentNode.data.Age;
+  document.getElementById('info_DoB').innerHTML = e.target.parentNode.data["DOB "];
+  document.getElementById('info_DeveroMRN').innerHTML = Number(e.target.parentNode.data["MR#"]);
+  document.getElementById('info_insurance').innerHTML = e.target.parentNode.data.Insurance;
+  document.getElementById('info_MRN').innerHTML = e.target.parentNode.data["Ins MRN"];
+  document.getElementById('info_insurance_comment').innerHTML = e.target.parentNode.data["Primary Insurance Comments"];
+
+  console.log(e.target.parentNode.data);
+});
 function ParseFileList(fileReference, file){
 	var reader = new FileReader();
 	reader.onload = function(){
@@ -173,7 +180,7 @@ function FilterDate(leTarget, TestObj, sourceData){
 
 function FilterKaiser(leTarget, TestObj, sourceData){
   switch(sourceData){
-    case "Devero":
+    case "Devero": //add a keyword in inruance comments, if there, filter pt bc insurance already checked.
       if(leTarget.Insurance != "Kaiser Foundation Health Plan Commercial")TestObj.filter = true;
       break;
     case "Sharepoint":
