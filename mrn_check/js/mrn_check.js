@@ -30,11 +30,13 @@ document.getElementById("csv_button").addEventListener('click', function(e){
       if(document.getElementById("kaiser-commercial").checked){
         FilterKaiser(leTarget, TestObj, "Devero");
       }
+      if(document.getElementById("caremore-commercial").checked) FilterCmErrors(leTarget, TestObj, "Devero");
+
+      //once all the tests have been done, did it get through the filters?
       if (TestObj.filter === false){
         var tr = document.createElement("TR");
         tr.setAttribute("class", 'row');
         tr.data = leTarget;
-  //if( (new Date(document.getElementById("date_input").value)).setHours(0,0,0,0) == (new Date(leTarget["Referral Date"])).setHours(0,0,0,0))
         for(var i=1;i<=columns;i++){
           var td = document.createElement("TD");
           var text;
@@ -186,5 +188,19 @@ function FilterKaiser(leTarget, TestObj, sourceData){
     case "Sharepoint":
       break;
     default:
+  }
+}
+
+function FilterCmErrors(leTarget, TestObj, sourceData){
+  switch (sourceData) {
+    case "Devero":
+      TestObj.filter = true; //filter by default. If Caremore...
+      if(leTarget.Insurance == "Caremore Medicare" && leTarget.Age < 65) TestObj.filter = false; //if medicare && under 65, show.
+       else if(leTarget.Insurance == "Caremore Commercial" && leTarget.Age > 64) TestObj.filter = false; //else if commercial && over 64, show.
+      break;
+    case "Sharepoint":
+      break;
+    default:
+
   }
 }
