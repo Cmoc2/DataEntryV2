@@ -400,7 +400,8 @@ function OutputCoordinator(deveroID){
 		else if (patient["Chart Status"] =="Pre-Admit") DocID("preAdmitButton").click();
 		console.log("CC: " + patient["Care Coordinator"]);
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
-		if( patient["Care Coordinator"] == "Burneo, Doris") DocID("cc-name").innerHTML = "Noche, Klarizza.";
+		if( patient["Care Coordinator"] == "Burneo, Doris") DocID("cc-name").innerHTML = "Quiling, Jann Mevigold.";
+		if( patient["Care Coordinator"] == "Noche, Klarizza") DocID("cc-name").innerHTML = "Azcarraga, Ragiel.";
 	} else{
 		console.error("CC Not Found.")
 		DocID("CCCode").innerHTML = "<red>CC</red>";
