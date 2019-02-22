@@ -386,7 +386,6 @@ function OutputName(deveroID){
 }
 function OutputCoordinator(deveroID){
 	var patient = ParseDeveroID(coordinator_data, deveroID);
-	var patient_detail = ParseDeveroID(soc_data, deveroID);
 	//On Match Found:
 	if(patient != null){
 		if(patient["Care Coordinator"] == ""){
@@ -403,8 +402,7 @@ function OutputCoordinator(deveroID){
 		DocID("cc-name").innerHTML = patient["Care Coordinator"] + ".";
 		if( patient["Care Coordinator"] == "Burneo, Doris") DocID("cc-name").innerHTML = "Quiling, Jann Mevigold.";
 		if( patient["Care Coordinator"] == "Noche, Klarizza") DocID("cc-name").innerHTML = "Azcarraga, Ragiel.";
-		if(patient_detail.Referrer == null);
-			else if(patient_detail.Referrer == "Kaiser South Bay") DocID("cc-name").innerHTML = "Azcarraga, Ragiel.";
+		if( patient["Care Coordinator"] == "Duran, Maria Luisa") DocID("cc-name").innerHTML = "Azcarraga, Ragiel.";
 	} else{
 		console.error("CC Not Found.")
 		DocID("CCCode").innerHTML = "<red>Verify CC</red>";
