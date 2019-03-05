@@ -65,12 +65,13 @@ document.getElementById("sp_button").addEventListener('click', function(e){
     var TestObj = {filter:false};
     var tr = document.createElement("TR");
     tr.setAttribute("class", 'row');
+    tr.data = leTarget;
     if(document.getElementById("referral_date").checked) FilterDate(leTarget, TestObj, "Sharepoint");
     if(TestObj.filter === false){
       for(var i=0;i<4;i++){
         var td = document.createElement("TD");
         var text;
-        if(i==0)  text = document.createTextNode(leTarget["Patient Name"]);
+        if(i==0)  text = document.createTextNode(leTarget["Patient Name."]);
           else if(i==1) text = document.createTextNode(leTarget.MRN);
           else if(i==2) text = document.createTextNode(leTarget["Care Coordinator"]);
           else if(i==3) text = document.createTextNode(leTarget["Referral Date"]);
@@ -115,6 +116,7 @@ document.getElementById("compare_button").addEventListener('click', function(e){
             if(foundMatch == false){
               console.log("No matching MRN (" +leTarget["Ins MRN"]+") for: " + leTarget.Patient);
               var tr = document.createElement("TR");
+              tr.data = leTarget;
               tr.setAttribute("class", 'row');
               for(var i=0;i<4;i++){
                 var td = document.createElement("TD");
