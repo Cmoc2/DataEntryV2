@@ -156,9 +156,10 @@ document.addEventListener('change', function(e){
     e.target.labels[0].innerHTML = e.target.labels[0].children[0].outerHTML + e.target.files[0].name;
   }
 
-if(e.target.labels[0].className == "filter_options_label"){
-  alert("Currently NOT working!\nUpdate coming eventually.");
-}
+  if(e.target.labels[0].className == "filter_options_label"){
+    alert("Currently NOT working!\nUpdate coming eventually.");
+  }
+
   console.log(e);
 })
 
