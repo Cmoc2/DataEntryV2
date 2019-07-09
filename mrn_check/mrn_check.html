@@ -3,6 +3,7 @@
   <head>
     <link href="./css/mrn_check.css" rel="stylesheet">
     <link href="./css/toggleStyle.css" rel="stylesheet">
+    <link href="./css/hover.css" rel="stylesheet">
   </head>
   <body>
     <div id='information_pane'>
@@ -15,38 +16,99 @@
       <p id='info_insurance_comment'></p>
     </div>
     <div id="div_heading">
-      <h2><u>Verification Tool</u></h2>
+      <h2 id="verification-tool">Verification Tool</h2>
       <div>
-        <p> Devero Referrals:
-          <input type='file' id='mrn_file'>
+        <p>Devero Referrals:
+
+            <input type='file' id='mrn_file'>
+
           <button id=csv_button> Update </button>
         </p>
-        <p>
-          Sharepoint Referrals:
-          <input type='file' id='sp_file'>
+        <p>Sharepoint Referrals:
+
+            <input type='file' id='sp_file'>
+
           <button id="sp_button"> Update </button>
         </p>
-        <p> Filter Out:</p>
-        <label class="switch">
-          <input type="checkbox" id="eight_mrn">
-          <span class="slider">8 Digit MRNs</span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="cm-mcmg-medicare">
-          <span class="slider">CM/MCMG/Medicare</span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="referral_date">
-          <span class="slider">Referral Date</span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="kaiser-commercial">
-          <span class="slider">Kaiser Comm</span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" id="caremore-commercial">
-          <span class="slider">CM Comm</span>
-        </label>
+        <p> Show:</p>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!eight_mrn">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="eight_mrn">
+              <span class="slider">8 Digit MRNs</span>
+            </label>
+          </div>
+        </div>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!cm-mcmg-medicare">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="cm-mcmg-medicare">
+              <span class="slider" style="font-size: 14px;">CM/ MCMG/ Medicare</span>
+            </label>
+          </div>
+        </div>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!referral_date">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="referral_date">
+              <span class="slider">Referral Date</span>
+            </label>
+          </div>
+        </div>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!kaiser-commercial">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="kaiser-commercial">
+              <span class="slider">Kaiser Comm</span>
+            </label>
+          </div>
+        </div>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!caremore-commercial">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="caremore-commercial">
+              <span class="slider">CM Comm</span>
+            </label>
+          </div>
+        </div>
+        <div class='filter_options_outer'>
+          <div class='filter_options_inner_top'>
+            <label class='filter_options_label'>
+              <input type="checkbox" id="!dob-PCP">
+            </label>
+          </div>
+          <div class='filter_options_inner_bottom'>
+            <label class="switch">
+              <input type="checkbox" id="dob-PCP">
+              <span class="slider" style="font-size: 14px;">Missing DoB/ PCP</span>
+            </label>
+          </div>
+        </div>
       </div>
       <p>
         Choose date to compare: <input type="date" id="date_input"></input><br>
@@ -93,7 +155,7 @@
          </tr>
       </table>
     </div>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="./js/mrn_check.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"> </script>
+    <script src="./js/mrn_check.js">             </script>
   </body>
 </html>

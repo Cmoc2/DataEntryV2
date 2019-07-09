@@ -31,7 +31,7 @@ document.getElementById("csv_button").addEventListener('click', function(e){
         FilterKaiser(leTarget, TestObj, "Devero");
       }
       if(document.getElementById("caremore-commercial").checked) FilterCmErrors(leTarget, TestObj, "Devero");
-
+      if(document.getElementById("dob-PCP").checked) Show_DoB_PcP(leTarget, TestObj, "Devero");
       //once all the tests have been done, did it get through the filters?
       if (TestObj.filter === false){
         var tr = document.createElement("TR");
@@ -136,19 +136,32 @@ document.getElementById("compare_button").addEventListener('click', function(e){
       document.getElementById("count3").innerHTML = "Devero: "+devero_count+". Sharepoint: "+sp_count+". Discrepancies: "+discrepancy+".";
     } else alert("referral date filter not checked.")
 });
+
 document.addEventListener('click', function(e){
-
-  if(event.target.tagName != 'TD') return;
-  document.getElementById('info_name').innerHTML = e.target.parentNode.data.Patient;
-  document.getElementById('info_age').innerHTML = e.target.parentNode.data.Age;
-  document.getElementById('info_DoB').innerHTML = e.target.parentNode.data["DOB "];
-  document.getElementById('info_DeveroMRN').innerHTML = Number(e.target.parentNode.data["MR#"]);
-  document.getElementById('info_insurance').innerHTML = e.target.parentNode.data.Insurance;
-  document.getElementById('info_MRN').innerHTML = e.target.parentNode.data["Ins MRN"];
-  document.getElementById('info_insurance_comment').innerHTML = e.target.parentNode.data["Primary Insurance Comments"];
-
-  console.log(e.target.parentNode.data);
+  //check if a table cell is clicked. if so, display additional data.
+  if(event.target.tagName == 'TD'){
+    document.getElementById('info_name').innerHTML = e.target.parentNode.data.Patient;
+    document.getElementById('info_age').innerHTML = e.target.parentNode.data.Age;
+    document.getElementById('info_DoB').innerHTML = e.target.parentNode.data["DOB "];
+    document.getElementById('info_DeveroMRN').innerHTML = Number(e.target.parentNode.data["MR#"]);
+    document.getElementById('info_insurance').innerHTML = e.target.parentNode.data.Insurance;
+    document.getElementById('info_MRN').innerHTML = e.target.parentNode.data["Ins MRN"];
+    document.getElementById('info_insurance_comment').innerHTML = e.target.parentNode.data["Primary Insurance Comments"];
+    if(e.shiftKey) console.log(e.target.parentNode.data);
+  }
 });
+
+document.addEventListener('change', function(e){
+  if(e.target.id=="mrn_file" || e.target.id=="sp_file"){
+    e.target.labels[0].innerHTML = e.target.labels[0].children[0].outerHTML + e.target.files[0].name;
+  }
+
+if(e.target.labels[0].className == "filter_options_label"){
+  alert("Currently NOT working!\nUpdate coming eventually.");
+}
+  console.log(e);
+})
+
 function ParseFileList(fileReference, file){
 	var reader = new FileReader();
 	reader.onload = function(){
@@ -204,5 +217,19 @@ function FilterCmErrors(leTarget, TestObj, sourceData){
       break;
     default:
 
+  }
+}
+
+function Show_DoB_PcP(leTarget, TestObj, sourceData){
+  switch (sourceData) {
+    case "Devero":
+      TestObj.filter = true;
+      if (leTarget.Age == "" || leTarget["Referring Physician (Primary)"] == "") TestObj.filter = false;
+    break;
+    case "Sharepoint":
+      break;
+    default:
+      alert("Something went wrong");
+      console.error("Something went wrong in function Show_DoB_PcP().")
   }
 }
